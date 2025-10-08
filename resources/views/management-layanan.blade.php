@@ -65,9 +65,10 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th>#</th>
+                                <th>ID Layanan</th>
                                 <th>Layanan</th>
                                 <th>Harga</th>
                                 <th>Deskripsi</th>
@@ -78,6 +79,7 @@
                             @foreach ($services as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                <td> {{ $item->id_layanan }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <img src="{{ asset('img/layanan/'.$item->foto_layanan) }}" width="100" class="me-3" alt="Gambar Layanan">

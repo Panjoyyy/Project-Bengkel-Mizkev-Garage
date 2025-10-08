@@ -7,6 +7,9 @@ use App\Models\Customer;
 use App\Models\Motor; 
 use App\Models\Order;
 use App\Models\Layanan;
+use App\Models\Staff;
+use App\Models\Servis;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -20,7 +23,9 @@ class AdminController extends Controller
             'customers' => Customer::all(),
             'motors'    => Motor::all(), 
             'services'  => Layanan::all(),
-            'mechanics' => Mechanic::all()
+            'mechanics' => Mechanic::all(),
+            'staffs' => Staff::all(),
+            'servis' => Servis::all(),
         ];
         return view('create-order', $data); // view baru: resources/views/order/create.blade.php
     }
@@ -31,6 +36,8 @@ class AdminController extends Controller
             'id_customer' => 'required',
             'id_motor'    => 'required',
             'id_service'  => 'required|array',
+            'id_staff'    => 'required',
+            'id_servis'    => 'required',
             'id_mechanic' => 'required'
         ]);
 
@@ -40,6 +47,8 @@ class AdminController extends Controller
                 'id_motor'      => $request->id_motor,
                 'id_service'    => $serviceId,
                 'id_mechanic'   => $request->id_mechanic,
+                'id_staff'   => $request->id_staff,
+                'id_servis'   => $request->id_service,
                 'transaction_id'=> 'MG176-' . time()
             ]);
         }
@@ -51,9 +60,9 @@ class AdminController extends Controller
     {
         $data = [
             'title'     => 'Pesanan & Transaksi',
-            'orders'    =>  Order::with(['service', 'mechanic'])->get()
+            'Servis'    =>  Order::with(['servis', 'mechanic'])->get()
         ];
 
-        return view('transaction', $data);
+        return view('management-servis', $data);
     }
 }

@@ -24,4 +24,10 @@ class Motor extends Model
     {
         return $this->belongsTo(Customer::class, 'id_customer', 'id_customer');
     }
+
+    // Relasi: satu motor bisa masuk ke banyak servis
+    public function servis()
+    {
+        return $this->hasMany(Servis::class, 'id_motor');
+    }
 }

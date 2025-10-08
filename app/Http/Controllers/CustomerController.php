@@ -20,12 +20,36 @@ class CustomerController extends Controller
     }
 
     // Management Customer
-    public function showManagementCustomer()
+    public function showManagementCustomer(Request $request)
     {
+        $search = $request->input('search');
+        $query = Customer::query();
+
+    if ($search) {
+        $customers = $query->where('nama_customer', 'like', "%{$search}%")
+            ->orWhere('id_customer', 'like', "%{$search}%")
+            ->get();
+
+        if ($customers->count() > 0) {
+            $message = "Data ID/Nama customer '{$search}' berhasil ditemukan.";
+            $alertType = 'success';
+        } else {
+            $message = "Tidak ada hasil untuk pencarian '{$search}'.";
+            $alertType = 'warning';
+        }
+    } else {
+        $customers = Customer::all();
+        $message = null;
+        $alertType = null;
+    }
+
     $data = [
-        'title'     => 'Manajemen Customer',
-        'customers' => Customer::all()
+        'title'     => 'Manajemen Kelola Customer',
+        'customers' => $customers,
+        'message'   => $message,
+        'alertType' => $alertType
     ];
+
     return view('management-customer', $data);
     }
 

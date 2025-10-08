@@ -13,16 +13,12 @@ class MotorController extends Controller
     {
         $motors = Motor::with('customer')->get();
         $customers = Customer::all();
-        $title = "Management Motor";
+        $title = "Manajemen Kelola Motor";
         return view('management-motors', compact('motors', 'customers', 'title'));
         $motors = Motor::all();
         return view('create-order', compact('customers', 'motors', 'services', 'mechanics'));
 
     }
-
-    
-
-
 
     // Simpan motor baru
     public function store(Request $request)

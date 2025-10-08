@@ -18,7 +18,7 @@ return new class extends Migration
             //$table->string('customer_address');
             //$table->string('motor_type');
             // $table->string('license_plate');
-            $table->foreignId('id_service')->nullable()->constrained('services', 'id_service')->cascadeOnNull();
+            $table->foreignId('id_layanan')->nullable()->constrained('layanan', 'id_layanan')->cascadeOnNull();
             $table->foreignId('id_mechanic')->nullable()->constrained('mechanics', 'id_mechanic')->cascadeOnNull();
         });
     }

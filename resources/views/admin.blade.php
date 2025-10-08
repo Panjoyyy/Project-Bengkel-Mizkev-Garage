@@ -53,6 +53,13 @@
                     </a>
                     </li>
 
+                    <li class="sidebar-item {{ request()->is('management-servis') ? 'sidebar-active' : '' }}">
+                    <a href="{{ route('management-servis') }}" class="sidebar-link">
+                    <i class="bi bi-wrench"></i>
+                    <span>Manajemen Kelola Servis</span>
+                    </a>
+                    </li>
+
                     <li class="sidebar-item {{ request()->is('management-spareparts') ? 'sidebar-active' : '' }}">
                     <a href="{{ route('spareparts.index') }}" class="sidebar-link">
                     <i class="bi bi-tools"></i>

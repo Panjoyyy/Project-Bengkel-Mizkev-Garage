@@ -8,6 +8,7 @@ use App\Http\Controllers\MotorController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController; 
+use App\Http\Controllers\ServisController;
 
     // Halaman Utama (Public)
     Route::get('/', [CustomerController::class, 'showHome'])->name('home');
@@ -44,6 +45,16 @@ use App\Http\Controllers\LayananController;
     Route::get('/management-spareparts/{id}/edit', [SparepartController::class, 'edit'])->name('spareparts.edit');
     Route::put('/management-spareparts/{id}', [SparepartController::class, 'update'])->name('spareparts.update');
     Route::delete('/management-spareparts/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
+
+    // Route Management Data Servis
+   // Halaman manajemen servis
+    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])
+    ->name('management-servis');
+
+    // CRUD Servis
+    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');  // <--- sesuaikan Blade
+    Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
+    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy'); 
 
     // ---------------------
     // Order

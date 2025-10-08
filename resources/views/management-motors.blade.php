@@ -1,12 +1,14 @@
 @extends('admin')
 
 @section('content')
+
     <div class="row">
         <div class="col-12 d-flex justify-content-between">
             <div class="">
                 <h5 class="card-title"><strong>{{ $title }}</strong></h5>
                 <p class="card-text">Manajemen Data Motor.</p>
             </div>
+            
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMotor">+ Tambah Motor</button>
 
             <!-- Tambah Motor -->

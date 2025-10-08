@@ -8,13 +8,37 @@ use Illuminate\Support\Facades\File;
 class MekanikController extends Controller
 {
     
-    public function showManagementMechanic()
+    public function showManagementMechanic(Request $request)
     {
-        $data = [
-            'title'     => 'Manajemen Mekanik',
-            'mechanics'  => Mechanic::all()
-        ];
-        return view('management-mechanic', $data);
+    $search = $request->input('search');
+    $query = Mechanic::query();
+
+    if ($search) {
+        $mechanics = $query->where('mechanic_name', 'like', "%{$search}%")
+            ->orWhere('id_mechanic', 'like', "%{$search}%")
+            ->get();
+
+        if ($mechanics->count() > 0) {
+            $message = "Data ID/Nama mekanik '{$search}' berhasil ditemukan.";
+            $alertType = 'success';
+        } else {
+            $message = "Tidak ada hasil untuk pencarian '{$search}'.";
+            $alertType = 'warning';
+        }
+    } else {
+        $mechanics = Mechanic::all();
+        $message = null;
+        $alertType = null;
+    }
+
+    $data = [
+        'title'     => 'Manajemen Kelola Mekanik',
+        'mechanics' => $mechanics,
+        'message'   => $message,
+        'alertType' => $alertType
+    ];
+
+    return view('management-mechanic', $data);
     }
 
     public function createMechanic(Request $request)

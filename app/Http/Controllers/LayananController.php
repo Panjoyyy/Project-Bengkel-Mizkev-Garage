@@ -12,7 +12,7 @@ class LayananController extends Controller
     public function showManagementService()
     {
         $data = [
-            'title'     => 'Manajemen Layanan',
+            'title'     => 'Manajemen Kelola Layanan',
             'services'  => Layanan::all()
         ];
         return view('management-layanan', $data);

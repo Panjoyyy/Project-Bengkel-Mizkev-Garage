@@ -5,7 +5,7 @@
     <div class="col-12">
         <div class="card mt-4 border-0">
             <div class="card-body">
-                <h5 class="card-title"><strong>Kelola Sparepart</strong></h5>
+                <h5 class="card-title"><strong>Manajemen Kelola Sparepart</strong></h5>
                 <p class="card-text">Manajemen Data Sparepart.</p>
                 <hr>
                 {{-- Notifikasi sukses --}}
@@ -33,14 +33,14 @@
                             <input type="number" step="0.01" name="harga_sparepart" class="form-control" required>
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-success w-100">Tambah</button>
+                            <button type="submit" class="btn btn-success w-100">+ Tambah Sparepart</button>
                         </div>
                     </div>
                 </form>
 
                 {{-- Tabel Sparepart --}}
                 <table class="table table-bordered">
-                    <thead class="table-light">
+                    <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>Nama Sparepart</th>

@@ -8,17 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Mechanic extends Model
 {
     use HasFactory;
+
+    protected $table = 'mechanics'; 
     protected $primaryKey = 'id_mechanic';
     public $timestamps = false;
 
     protected $fillable = [
-        'machanic_name',
+        'mechanic_name',
         'mechanic_phone',
         'mechanic_image'
     ];
 
-    public function orders()
+    public function servis()
     {
-        return $this->hasMany(Order::class, 'id_mechanic');
+        return $this->hasMany(Servis::class, 'id_mechanic');
     }
 }

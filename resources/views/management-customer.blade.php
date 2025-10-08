@@ -1,12 +1,39 @@
 @extends('admin')
 
 @section('content')
+@if ($message)
+    <div class="alert alert-{{ $alertType }} shadow-sm d-flex align-items-center gap-2 mt-3 fade show"
+         style="border-left: 5px solid {{ $alertType === 'success' ? '#1abc9c' : '#f1c40f' }};
+                background-color: {{ $alertType === 'success' ? '#ecfdf5' : '#fffbea' }};
+                color: {{ $alertType === 'success' ? '#065f46' : '#92400e' }};
+                border-radius: 8px; animation: fadeIn 0.4s ease;">
+        <i class="bi {{ $alertType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
+        <span>{{ $message }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+    <style>
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+    </style>
     <div class="row">
         <div class="col-12 d-flex justify-content-between">
             <div class="">
                 <h5 class="card-title"><strong>{{ $title }}</strong></h5>
                 <p class="card-text">Manajemen Data Customer.</p>
             </div>
+            <form action="{{ route('management-customer') }}" method="GET" class="d-flex justify-content-end mb-3" style="gap: 10px;">
+                <input type="text" name="search" class="form-control shadow-sm" 
+                placeholder="Cari customer" 
+                style="width: 350px; border-radius: 10px;"
+                value="{{ request('search') }}">
+
+                <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
+                    <i class="bi bi-search me-1"></i> Cari
+                </button>
+            </form>
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCustomer">+ Tambah Customer</button>
 
             <div class="modal fade" id="addCustomer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -62,7 +89,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table">
-                            <thead>
+                            <thead class="table-dark">
                                 <tr>
                                     <th>#</th>
                                     <th>ID Customer</th>
