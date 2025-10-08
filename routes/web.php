@@ -9,6 +9,11 @@ use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController; 
 
+// Route untuk menampilkan halaman porto
+Route::get('/porto', function () {
+    return view('porto');
+});
+
     // Halaman Utama (Public)
     Route::get('/', [CustomerController::class, 'showHome'])->name('home');
 
