@@ -19,6 +19,15 @@ class CustomerController extends Controller
         return view('home', $data);
     }
 
+    public function showHomeCustomer()
+    {
+        $data = [
+            'title' => ''
+        ];
+
+        return view('porto', $data); 
+    }
+
     // Management Customer
     public function showManagementCustomer(Request $request)
     {
