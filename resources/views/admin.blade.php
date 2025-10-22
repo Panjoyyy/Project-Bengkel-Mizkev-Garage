@@ -23,7 +23,7 @@
                     <li class="sidebar-item {{ request()->is('create-order') ? 'sidebar-active' : '' }}">
                         <a href="{{ route('create-order') }}" class="sidebar-link">
                             <i class="bi bi-border-all"></i>
-                            <span>Buat Pesanan</span>
+                            <span>Dashboard Admin</span>
                         </a>
                     </li>
                     <li class="sidebar-item {{ request()->is('management-layanan') ? 'sidebar-active' : '' }}">

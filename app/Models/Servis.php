@@ -27,7 +27,7 @@ class Servis extends Model
     // Relasi ke Mekanik
     public function mechanic()
     {
-        return $this->belongsTo(Mechanic::class, 'id_mechanicgi', 'id_mechanic');
+        return $this->belongsTo(Mechanic::class, 'id_mechanic', 'id_mechanic');
     }
 
     // Relasi ke Staff

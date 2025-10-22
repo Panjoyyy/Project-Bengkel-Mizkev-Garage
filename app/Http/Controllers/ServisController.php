@@ -28,6 +28,7 @@ class ServisController extends Controller
     public function createServis(Request $request)
     {
         $request->validate([
+            'id_customer' => 'required|exists:customers,id_customer', 
             'id_motor'    => 'required|exists:motors,id_motor',
             'id_mechanic'  => 'required|exists:mechanics,id_mechanic',
             'id_staff'    => 'required|exists:staff,id_staff',
@@ -49,7 +50,7 @@ class ServisController extends Controller
     // Memperbarui data servis
     public function updateServis(Request $request, $id_servis)
     {
-        $request->validate([
+        $request->validate([ 
             'id_motor'    => 'required|exists:motors,id_motor',
             'id_mechanic'  => 'required|exists:mechanics,id_mechanic',
             'id_staff'    => 'required|exists:staff,id_staff',

@@ -57,8 +57,8 @@
                             </div>
                             <div class="mt-3">
                                 <label for="mechanic_phone">Nomor Telepon</label>
-                                <input type="number" class="form-control" required placeholder="Masukkan nomor telepon"
-                                    name="mechanic_phone" id="mechanic_phone">
+                                <input type="text" class="form-control" required placeholder="Masukkan nomor telepon"
+                                    name="mechanic_phone" id="mechanic_phone" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                             </div>
                             <div class="mt-3">
                                 <label for="mechanic_image">Gambar</label>
@@ -158,15 +158,13 @@
                                                                 <label for="mechanic_name">Nama Mekanik</label>
                                                                 <input type="text" value="{{ $item->mechanic_name }}"
                                                                     class="form-control" required
-                                                                    placeholder="Masukkan nama layanan" name="mechanic_name"
+                                                                    placeholder="Masukkan nama mekanik" name="mechanic_name"
                                                                     id="mechanic_name">
                                                             </div>
                                                             <div class="mt-3">
                                                                 <label for="mechanic_phone">Nomor Telepon</label>
-                                                                <input type="number" value="{{ $item->mechanic_phone }}"
-                                                                    class="form-control" required
-                                                                    placeholder="Masukkan harga layanan" name="mechanic_phone"
-                                                                    id="mechanic_phone">
+                                                                <input type="text" value="{{ $item->mechanic_phone }}" class="form-control" required placeholder="Masukkan nomor telepon"
+                                                                name="mechanic_phone" id="mechanic_phone" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                                                             </div>
                                                             <div class="mt-3">
                                                                 <label for="mechanic_image">Gambar</label>

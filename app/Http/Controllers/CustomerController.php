@@ -8,24 +8,19 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function showHome()
-    {
-        $data = [
-            'title'     => 'Beranda',
-            'services'  => Layanan::all(),
-            'countService' => Layanan::count(),
-        ];
-
-        return view('home', $data);
-    }
 
     public function showHomeCustomer()
     {
-        $data = [
-            'title' => ''
-        ];
+    // Ambil data dari tabel layanan
+    $services = Layanan::all();
 
-        return view('porto', $data); 
+    $data = [
+        'title' => 'Home Customer',
+        'services' => $services,
+        'countService' => $services->count()
+    ];
+
+    return view('porto', $data);
     }
 
     // Management Customer

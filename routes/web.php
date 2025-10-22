@@ -16,7 +16,7 @@ Route::get('/porto', function () {
 });
 
     // Halaman Utama (Public)
-    Route::get('/', [CustomerController::class, 'showHome'])->name('home');
+    Route::get('/', [CustomerController::class, 'showHomeCustomer'])->name('porto');
 
     // Route untuk Tamu (Belum Login)
     Route::middleware('guest')->group(function () {
@@ -61,6 +61,8 @@ Route::get('/porto', function () {
     Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
     Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy'); 
 
+    Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
+    // ----------------------------
     // ---------------------
     // Order
     // ---------------------

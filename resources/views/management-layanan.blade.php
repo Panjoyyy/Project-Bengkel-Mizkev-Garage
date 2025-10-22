@@ -26,8 +26,12 @@
                     <input type="text" class="form-control" required name="nama_layanan" id="nama_layanan" placeholder="Masukkan nama layanan">
                 </div>
                 <div class="mt-3">
-                    <label for="lokasi_layanan">Lokasi Layanan</label>
-                    <input type="text" class="form-control" required name="lokasi_layanan" id="lokasi_layanan" placeholder="Masukkan lokasi layanan">
+                    <label for="lokasi_layanan" class="form-label">Lokasi Layanan</label>
+                    <select class="form-select" name="lokasi_layanan" id="lokasi_layanan" required>
+                        <option value="" selected disabled>Pilih lokasi layanan</option>
+                        <option value="Garage Paingan">Garage Paingan</option>
+                        <option value="Garage Mrican">Garage Mrican</option>
+                    </select>
                 </div>
                 <div class="mt-3">
                     <label for="harga_layanan">Harga</label>
@@ -127,14 +131,17 @@
                                                         <label for="nama_layanan">Nama Layanan</label>
                                                         <input type="text" value="{{ $item->nama_layanan }}" class="form-control" required name="nama_layanan">
                                                     </div>
-                                                    <div class="mt-3">
-                                                        <label for="lokasi_layanan">Lokasi Layanan</label>
-                                                        <input type="text" value="{{ $item->lokasi_layanan }}" class="form-control" required name="lokasi_layanan">
+                                                   <div class="mt-3">
+                                                        <label for="lokasi_layanan" class="form-label">Lokasi Layanan</label>
+                                                        <select class="form-select" name="lokasi_layanan" id="lokasi_layanan" required>
+                                                        <option value="" disabled {{ empty($item->lokasi_layanan) ? 'selected' : '' }}>Pilih lokasi layanan</option>
+                                                        <option value="Garage Paingan" {{ $item->lokasi_layanan == 'Garage Paingan' ? 'selected' : '' }}>Garage Paingan</option>
+                                                        <option value="Garage Mrican" {{ $item->lokasi_layanan == 'Garage Mrican' ? 'selected' : '' }}>Garage Mrican</option>
+                                                        </select>
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="harga_layanan">Harga</label>
-                                                        <input type="text" step="0.01" value="{{ $item->harga_layanan }}" class="form-control" required name="harga_layanan">
-
+                                                        <input type="number" step="0.01" value="{{ $item->harga_layanan }}" class="form-control" required name="harga_layanan">
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="deskripsi_layanan">Deskripsi</label>

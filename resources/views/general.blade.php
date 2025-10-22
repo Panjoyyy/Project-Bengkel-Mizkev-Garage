@@ -12,14 +12,11 @@
 <body>
     <div class="container-fluid">
         <nav class="navbar bg-body-tertiary">
-            <a href="{{ auth()->check() ? route('create-order') : route('home') }}" class="navbar-brand">
+            <a href="{{ auth()->check() ? route('create-order') : route('porto') }}" class="navbar-brand">
                 
                 <img src="{{ asset('img/logo.jpg') }}" width="65" height="65" class="rounded" alt="">
                 <strong>Mizkev Garage</strong>
             </a>
-            <div class="d-flex">
-                <a href="{{ route('login') }}" class="btn btn-dark">Masuk</a>
-            </div>
         </nav>
         @yield('content')
     </div>

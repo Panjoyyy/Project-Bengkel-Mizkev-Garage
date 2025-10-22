@@ -34,8 +34,13 @@
                                 <input type="text" name="warna_motor" class="form-control" required>
                             </div>
                             <div class="mt-3">
-                                <label>Tahun Motor</label>
-                                <input type="number" name="tahun_motor" class="form-control" required>
+                                <label for="tahun_motor">Tahun Motor</label>
+                                <select class="form-select" name="tahun_motor" id="tahun_motor" required>
+                                <option value="" selected disabled>Pilih Tahun</option>
+                                @for ($year = date('Y'); $year >= 1990; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                                @endfor
+                                </select>
                             </div>
                             <div class="mt-3">
                                 <label>Pemilik (Customer)</label>
@@ -127,10 +132,16 @@
                                                                 <input type="text" name="warna_motor" class="form-control"
                                                                     value="{{ $motor->warna_motor }}" required>
                                                             </div>
-                                                            <div class="mt-3">
-                                                                <label>Tahun Motor</label>
-                                                                <input type="number" name="tahun_motor" class="form-control"
-                                                                    value="{{ $motor->tahun_motor }}" required>
+                                                           <div class="mt-3">
+                                                                <label for="tahun_motor">Tahun Motor</label>
+                                                                <select name="tahun_motor" id="tahun_motor" class="form-control" required>
+                                                                <option value="" disabled>Pilih Tahun</option>
+                                                                    @for ($year = date('Y'); $year >= 1990; $year--)
+                                                                <option value="{{ $year }}" {{ $motor->tahun_motor == $year ? 'selected' : '' }}>
+                                                                    {{ $year }}
+                                                                </option>
+                                                                    @endfor
+                                                                </select>
                                                             </div>
                                                             <div class="mt-3">
                                                                 <label>Pemilik (Customer)</label>
