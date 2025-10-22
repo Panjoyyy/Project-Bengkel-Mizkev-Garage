@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key ke tabel terkait
+            $table->foreignId('id_customer')->constrained('customers', 'id_customer');
             $table->foreignId('id_motor')->nullable()->constrained('motors', 'id_motor')->cascadeOnNull();
             $table->foreignId('id_mechanic')->nullable()->constrained('mechanics', 'id_mechanic')->cascadeOnNull();
             $table->foreignId('id_staff')->nullable()->constrained('staff', 'id_staff')->cascadeOnNull();

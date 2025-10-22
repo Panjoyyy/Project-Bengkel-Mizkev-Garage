@@ -7,7 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MotorController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\MekanikController;
-use App\Http\Controllers\LayananController; 
+use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
 
 // Route untuk menampilkan halaman porto brian
@@ -15,17 +15,17 @@ Route::get('/porto', function () {
     return view('porto');
 });
 
-    // Halaman Utama (Public)
-    Route::get('/', [CustomerController::class, 'showHome'])->name('home');
+// Halaman Utama (Public)
+Route::get('/', [CustomerController::class, 'showHome'])->name('home');
 
-    // Route untuk Tamu (Belum Login)
-    Route::middleware('guest')->group(function () {
+// Route untuk Tamu (Belum Login)
+Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'handleLogin'])->name('handleLogin');
-    });
+});
 
-    // Route untuk yang sudah login (Auth)
-    Route::middleware(['auth'])->group(function () {
+// Route untuk yang sudah login (Auth)
+Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -52,14 +52,15 @@ Route::get('/porto', function () {
     Route::delete('/management-spareparts/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
 
     // Route Management Data Servis
-   // Halaman manajemen servis
-    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])
-    ->name('management-servis');
-
-    // CRUD Servis
-    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');  // <--- sesuaikan Blade
+    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])->name('management-servis');
+    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
     Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
-    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy'); 
+    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
+    
+    // --- ROUTE BARU UNTUK AJAX ---
+    // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
+    Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
+    // ----------------------------
 
     // ---------------------
     // Order

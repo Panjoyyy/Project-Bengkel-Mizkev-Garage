@@ -18,6 +18,14 @@ class Servis extends Model
         'tanggal_servis'
     ];
 
+     /**
+     * Relasi ke Customer (INI YANG HILANG)
+     */
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'id_customer');
+    }
+
     // Relasi ke Motor
     public function motor()
     {
@@ -27,7 +35,7 @@ class Servis extends Model
     // Relasi ke Mekanik
     public function mechanic()
     {
-        return $this->belongsTo(Mechanic::class, 'id_mechanicgi', 'id_mechanic');
+        return $this->belongsTo(Mechanic::class, 'id_mechanic', 'id_mechanic');
     }
 
     // Relasi ke Staff
