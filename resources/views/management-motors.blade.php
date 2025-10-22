@@ -8,6 +8,16 @@
                 <h5 class="card-title"><strong>{{ $title }}</strong></h5>
                 <p class="card-text">Manajemen Data Motor.</p>
             </div>
+
+            <form action="{{ route('management-motors') }}" method="GET" class="d-flex justify-content-end mb-3" style="gap: 10px;">
+            <input type="text" name="search" class="form-control shadow-sm" 
+            placeholder="Cari motor" 
+            style="width: 350px; border-radius: 10px;">
+
+            <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
+            <i class="bi bi-search me-1"></i> Cari
+            </button>
+        </form>
             
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMotor">+ Tambah Motor</button>
 

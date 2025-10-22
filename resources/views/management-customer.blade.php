@@ -53,7 +53,7 @@
                             <div class="mt-3">
                                 <label for="no_telp_customer">Nomor Telepon</label>
                                 <input type="text" class="form-control" required placeholder="Masukkan nomor telepon"
-                                    name="no_telp_customer" id="no_telp_customer">
+                                    name="no_telp_customer" id="no_telp_customer"  oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                             </div>
                             <div class="mt-3">
                                 <label for="alamat_customer">Alamat</label>
@@ -138,7 +138,7 @@
                                                                 <label for="no_telp_customer">Nomor Telepon</label>
                                                                 <input type="text" value="{{ $item->no_telp_customer }}"
                                                                     class="form-control" required name="no_telp_customer"
-                                                                    id="no_telp_customer">
+                                                                    id="no_telp_customer" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                                                             </div>
                                                             <div class="mt-3">
                                                                 <label for="alamat_customer">Alamat</label>
