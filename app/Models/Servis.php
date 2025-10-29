@@ -30,6 +30,13 @@ class Servis extends Model
         $lastNumber = (int) preg_replace('/\D/', '', $lastServis->id_servis);
         $newNumber = $lastNumber + 1;
         return 'SRC' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+     /**
+     * Relasi ke Customer (INI YANG HILANG)
+     */
+    }
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'id_customer');
     }
 
     // Relasi ke Motor

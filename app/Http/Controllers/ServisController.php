@@ -11,11 +11,16 @@ use Illuminate\Http\Request;
 
 class ServisController extends Controller
 {
-public function showManagementServis(Request $request)
-{
-    $search = $request->get('search');
-    $message = null;
-    $alertType = null;
+    // Menampilkan halaman manajemen servis
+    public function showManagementServis()
+    {
+        $data = [
+            'title'     => 'Manajemen Kelola Servis',
+            'servis'    => Servis::with(['customer', 'motor', 'mechanic', 'staff'])->latest()->get(),
+            'customers' => Customer::all(), 
+            'mechanics' => Mechanic::all(),
+            'staffs'    => Staff::all(),
+        ];
 
     if ($search) {
         // Jika ada input pencarian

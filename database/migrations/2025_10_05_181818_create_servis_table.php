@@ -24,6 +24,10 @@ return new class extends Migration
             $table->string('id_staff', 20)->nullable();
             $table->foreign('id_staff')->references('id_staff')->on('staff')->onDelete('set null');
             $table->timestamps();
+            $table->foreignId('id_customer')->constrained('customers', 'id_customer');
+            $table->foreignId('id_motor')->nullable()->constrained('motors', 'id_motor')->cascadeOnNull();
+            $table->foreignId('id_mechanic')->nullable()->constrained('mechanics', 'id_mechanic')->cascadeOnNull();
+            $table->foreignId('id_staff')->nullable()->constrained('staff', 'id_staff')->cascadeOnNull();
 
         });
     }
