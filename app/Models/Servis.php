@@ -34,10 +34,6 @@ class Servis extends Model
      * Relasi ke Customer (INI YANG HILANG)
      */
     }
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class, 'id_customer');
-    }
 
     // Relasi ke Motor
     public function motor()

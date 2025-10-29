@@ -12,11 +12,14 @@ use Illuminate\Http\Request;
 class ServisController extends Controller
 {
     // Menampilkan halaman manajemen servis
-    public function showManagementServis()
+    public function showManagementServis(Request $request)
     {
+        $search = $request->input('search');
+        $message = null;
+        $alertType = null;
         $data = [
             'title'     => 'Manajemen Kelola Servis',
-            'servis'    => Servis::with(['customer', 'motor', 'mechanic', 'staff'])->latest()->get(),
+            'servis'    => Servis::with(['motor', 'mechanic', 'staff'])->latest()->get(),
             'customers' => Customer::all(), 
             'mechanics' => Mechanic::all(),
             'staffs'    => Staff::all(),
@@ -37,9 +40,9 @@ class ServisController extends Controller
         }
     } else {
         // Jika tidak mencari, tampilkan semua
-        $servis = Servis::with(['motor', 'mechanic', 'staff'])->get();
+        $servis = Servis::with(['motor', 'mechanic', 'staff'])->get();  
     }
-
+    $customers = Customer::all();
     $motors = Motor::all();
     $mechanics = Mechanic::all();
     $staffs = Staff::all();
