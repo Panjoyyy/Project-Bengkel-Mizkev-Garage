@@ -1,56 +1,42 @@
 @extends('admin')
 
 @section('content')
+
+@if (!empty($message))
+    <div class="alert alert-{{ $alertType }} shadow-sm d-flex align-items-center gap-2 mt-3 fade show"
+         style="border-left: 5px solid {{ $alertType === 'success' ? '#1abc9c' : '#f1c40f' }};
+                background-color: {{ $alertType === 'success' ? '#ecfdf5' : '#fffbea' }};
+                color: {{ $alertType === 'success' ? '#065f46' : '#92400e' }};
+                border-radius: 8px; animation: fadeIn 0.4s ease;">
+        <i class="bi {{ $alertType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
+        <span>{{ $message }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
 <div class="row">
     <div class="col-12 d-flex justify-content-between align-items-center">
         <div>        
             <h5 class="card-title"><strong>{{ $title }}</strong></h5>
             <p class="card-text">Manajemen Data Layanan.</p>
         </div>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addService">+ Tambah Layanan</button>
-    </div>
-</div>
+        <form action="{{ route('management-layanan') }}" method="GET" class="d-flex justify-content-end mb-3" style="gap: 10px;">
+            <input type="text" name="search" class="form-control shadow-sm" 
+            placeholder="Cari layanan..." 
+            style="width: 350px; border-radius: 10px;">
 
-{{-- Modal Tambah Layanan --}}
-<div class="modal fade" id="addService" tabindex="-1" aria-labelledby="addServiceLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="POST" action="{{ route('create-service') }}" class="modal-content" enctype="multipart/form-data">
-            @csrf
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addServiceLabel">Tambah Layanan</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mt-3">
-                    <label for="nama_layanan">Nama Layanan</label>
-                    <input type="text" class="form-control" required name="nama_layanan" id="nama_layanan" placeholder="Masukkan nama layanan">
-                </div>
-                <div class="mt-3">
-                    <label for="lokasi_layanan" class="form-label">Lokasi Layanan</label>
-                    <select class="form-select" name="lokasi_layanan" id="lokasi_layanan" required>
-                        <option value="" selected disabled>Pilih lokasi layanan</option>
-                        <option value="Garage Paingan">Garage Paingan</option>
-                        <option value="Garage Mrican">Garage Mrican</option>
-                    </select>
-                </div>
-                <div class="mt-3">
-                    <label for="harga_layanan">Harga</label>
-                    <input type="number" step="0.01" class="form-control" required name="harga_layanan" id="harga_layanan" placeholder="Masukkan harga layanan">
-                </div>
-                <div class="mt-3">
-                    <label for="deskripsi_layanan">Deskripsi</label>
-                    <textarea class="form-control" name="deskripsi_layanan" id="deskripsi_layanan" rows="3"></textarea>
-                </div>
-                <div class="mt-3">
-                    <label for="foto_layanan">Gambar</label>
-                    <input type="file" accept=".jpg,.png,.jpeg" class="form-control" required name="foto_layanan" id="foto_layanan">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </div>
+            <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
+            <i class="bi bi-search me-1"></i> Cari
+            </button>
         </form>
+            <a href="{{ route('create-service-form') }}" class="btn btn-success">+ Tambah Layanan</a>
     </div>
 </div>
 
@@ -71,9 +57,9 @@
                     <table class="table">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
+                                <th>NO</th>
                                 <th>ID Layanan</th>
-                                <th>Layanan</th>
+                                <th>Nama Layanan</th>
                                 <th>Harga</th>
                                 <th>Deskripsi</th>
                                 <th>Aksi</th>
@@ -93,10 +79,17 @@
                                 <td>Rp {{ number_format($item->harga_layanan, 0, ',', '.') }}</td>
                                 <td>{{ $item->deskripsi_layanan }}</td>
                                 <td>
+
+                                {{-- Tombol Edit --}}
+                                <a href="{{ route('edit-service-form', $item->id_layanan) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
                                     {{-- Tombol Hapus --}}
-                                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{ $item->id_layanan }}">
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete{{ $item->id_layanan }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                    
                                     <div class="modal fade" id="delete{{ $item->id_layanan }}" tabindex="-1" aria-hidden="true">
                                         <form action="{{ route('delete-service', $item->id_layanan) }}" method="POST" class="modal-dialog">
                                             @csrf
@@ -112,55 +105,6 @@
                                             </div>
                                         </form>
                                     </div>
-
-                                    {{-- Tombol Edit --}}
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit{{ $item->id_layanan }}">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <div class="modal fade" id="edit{{ $item->id_layanan }}" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <form method="POST" action="{{ route('update-service', $item->id_layanan) }}" class="modal-content" enctype="multipart/form-data">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5">Edit Layanan</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mt-3">
-                                                        <label for="nama_layanan">Nama Layanan</label>
-                                                        <input type="text" value="{{ $item->nama_layanan }}" class="form-control" required name="nama_layanan">
-                                                    </div>
-                                                   <div class="mt-3">
-                                                        <label for="lokasi_layanan" class="form-label">Lokasi Layanan</label>
-                                                        <select class="form-select" name="lokasi_layanan" id="lokasi_layanan" required>
-                                                        <option value="" disabled {{ empty($item->lokasi_layanan) ? 'selected' : '' }}>Pilih lokasi layanan</option>
-                                                        <option value="Garage Paingan" {{ $item->lokasi_layanan == 'Garage Paingan' ? 'selected' : '' }}>Garage Paingan</option>
-                                                        <option value="Garage Mrican" {{ $item->lokasi_layanan == 'Garage Mrican' ? 'selected' : '' }}>Garage Mrican</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mt-3">
-                                                        <label for="harga_layanan">Harga</label>
-                                                        <input type="number" step="0.01" value="{{ $item->harga_layanan }}" class="form-control" required name="harga_layanan">
-                                                    </div>
-                                                    <div class="mt-3">
-                                                        <label for="deskripsi_layanan">Deskripsi</label>
-                                                        <textarea name="deskripsi_layanan" class="form-control" rows="3">{{ $item->deskripsi_layanan }}</textarea>
-                                                    </div>
-                                                    <div class="mt-3">
-                                                        <label for="foto_layanan">Gambar</label>
-                                                        <input type="file" accept=".jpg,.png,.jpeg" class="form-control" name="foto_layanan">
-                                                        <a href="{{ asset('img/services/'.$item->foto_layanan) }}" target="_blank">Preview</a>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-
                                 </td>
                             </tr>
                             @endforeach

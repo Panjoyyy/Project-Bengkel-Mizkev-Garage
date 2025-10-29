@@ -1,70 +1,44 @@
 @extends('admin')
 
 @section('content')
+@if (!empty($message))
+    <div class="alert alert-{{ $alertType }} shadow-sm d-flex align-items-center gap-2 mt-3 fade show"
+         style="border-left: 5px solid {{ $alertType === 'success' ? '#1abc9c' : '#f1c40f' }};
+                background-color: {{ $alertType === 'success' ? '#ecfdf5' : '#fffbea' }};
+                color: {{ $alertType === 'success' ? '#065f46' : '#92400e' }};
+                border-radius: 8px; animation: fadeIn 0.4s ease;">
+        <i class="bi {{ $alertType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
+        <span>{{ $message }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
 <div class="row">
-    <div class="col-12 d-flex justify-content-between">
-        <div class="">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <div>
             <h5 class="card-title"><strong>{{ $title }}</strong></h5>
             <p class="card-text">Manajemen Data Servis.</p>
         </div>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addServis">+ Tambah Servis</button>
 
-        {{-- Modal Tambah Servis --}}
-        <div class="modal fade" id="addServis" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <form method="POST" action="{{ route('servis.store') }}" class="modal-content">
-                    @csrf
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5">Tambah Servis</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mt-3">
-                            <label for="tanggal_servis">Tanggal & Waktu Servis</label>
-                            <input type="datetime-local" class="form-control" name="tanggal_servis" id="tanggal_servis" required>
-                        </div>
-                        <div class="mt-3">
-                            <label for="keluhan">Keluhan</label>
-                            <textarea class="form-control" name="keluhan" id="keluhan" rows="3" required></textarea>
-                        </div>
-                        <div class="mt-3">
-                            <label for="id_motor">Motor</label>
-                            <select class="form-control" name="id_motor" id="id_motor" required>
-                                <option value="">-- Pilih Motor --</option>
-                                @foreach ($motors as $motor)
-                                    <option value="{{ $motor->id_motor }}">{{ $motor->id_motor }}. {{ $motor->merk_motor }} - {{ $motor->no_plat_motor }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mt-3">
-                            <label for="id_mechanic">Mekanik</label>
-                            <select class="form-control" name="id_mechanic" id="id_mechanic" required>
-                                <option value="">-- Pilih Mekanik --</option>
-                                @foreach ($mechanics as $mekanik)
-                                    <option value="{{ $mekanik->id_mechanic }}">
-                                    {{ $mekanik->id_mechanic }}. {{ $mekanik->mechanic_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mt-3">
-                            <label for="id_staff">Staff</label>
-                            <select class="form-control" name="id_staff" id="id_staff" required>
-                                <option value="">-- Pilih Staff --</option>
-                                @foreach ($staffs as $staff)
-                                    <option value="{{ $staff->id_staff }}">{{ $staff->id_staff }}. {{ $staff->nama_staff }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        {{-- FORM PENCARIAN --}}
+        <form action="{{ route('management-servis') }}" method="GET" 
+              class="d-flex align-items-center gap-2">
+            <input type="text" name="search" class="form-control shadow-sm" 
+                   placeholder="Cari servis..." 
+                   style="width: 300px; border-radius: 10px;" 
+                   value="{{ request('search') }}">
+            <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
+                <i class="bi bi-search me-1"></i> Cari
+            </button>
+        </form>
+        <a href="{{ route('servis.create') }}" class="btn btn-success">+ Tambah Servis</a>
     </div>
 </div>
 
@@ -83,7 +57,7 @@
                     <table class="table">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
+                                <th>NO</th>
                                 <th>ID Servis</th>
                                 <th>Tanggal & Waktu Servis</th>
                                 <th>Motor</th>
@@ -97,13 +71,17 @@
                             @foreach ($servis as $item)
                                 <tr style="vertical-align: middle">
                                     <td>{{ $loop->iteration }}</td>
-                                     <td>{{ $item->id_servis }}</td>
+                                    <td>{{ $item->id_servis }}</td>
                                     <td>{{ $item->tanggal_servis }}</td>
                                     <td>{{ $item->motor->merk_motor ?? '-' }} - {{ $item->motor->no_plat_motor ?? '-' }}</td>
                                     <td>{{ $item->mechanic->mechanic_name ?? '-' }}</td>
                                     <td>{{ $item->staff->nama_staff ?? '-' }}</td>
                                     <td>{{ $item->keluhan }}</td>
                                     <td>
+                                        {{-- Tombol Edit --}}
+                                        <a href="{{ route('servis.edit', $item->id_servis) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
                                         {{-- Tombol Hapus --}}
                                         <button class="btn btn-danger" data-bs-toggle="modal"
                                             data-bs-target="{{ '#delete' . $item->id_servis }}"><i
@@ -127,76 +105,6 @@
                                                 </div>
                                             </form>
                                         </div>
-
-                                        {{-- Tombol Edit --}}
-                                        <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="{{ '#edit' . $item->id_servis }}"><i
-                                                class="bi bi-pencil-square"></i></button>
-                                        <div class="modal fade" id="{{ 'edit' . $item->id_servis }}" tabindex="-1">
-                                            <div class="modal-dialog">
-                                                <form method="POST" action="{{ route('servis.update', $item->id_servis) }}"
-                                                    class="modal-content">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5">Edit Servis</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="mt-3">
-                                                            <label for="tanggal_servis">Tanggal & Waktu Servis</label>
-                                                            <input type="datetime-local" class="form-control"
-                                                                name="tanggal_servis" value="{{ $item->tanggal_servis }}" required>
-                                                        </div>
-                                                        <div class="mt-3">
-                                                            <label for="keluhan">Keluhan</label>
-                                                            <textarea class="form-control" name="keluhan" rows="3" required>{{ $item->keluhan }}</textarea>
-                                                        </div>
-
-                                                        <div class="mt-3">
-                                                            <label for="id_motor">Motor</label>
-                                                            <select class="form-control" name="id_motor" required>
-                                                                @foreach ($motors as $motor)
-                                                                   <option value="{{ $motor->id_motor }}"
-                                                                    {{ $item->id_motor == $motor->id_motor ? 'selected' : '' }}>
-                                                                   {{ $motor->id_motor }}. {{ $motor->merk_motor }} - {{ $motor->no_plat_motor }}
-                                                                </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="mt-3">
-                                                            <label for="id_mechanic">Mekanik</label>
-                                                            <select class="form-control" name="id_mechanic" required>
-                                                                @foreach ($mechanics as $mekanik)
-                                                                    <option value="{{ $mekanik->id_mechanic }}"
-                                                                    {{ $item->id_mechanic == $mekanik->id_mechanic ? 'selected' : '' }}>
-                                                                    {{ $mekanik->id_mechanic }}. {{ $mekanik->mechanic_name }}
-                                                                    </option>
-                                                                    @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="mt-3">
-                                                            <label for="id_staff">Staff</label>
-                                                            <select class="form-control" name="id_staff" required>
-                                                                @foreach ($staffs as $staff)
-                                                                    <option value="{{ $staff->id_staff }}"
-                                                                        {{ $item->id_staff == $staff->id_staff ? 'selected' : '' }}>
-                                                                        {{ $staff->id_staff }}. {{ $staff->nama_staff }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Batal</button>
-                                                        <button type="submit" class="btn btn-primary">Simpan</button>
-                                                    </div>
-                                                </form>
-                                            </div>
                                         </div>
                                     </td>
                                 </tr>

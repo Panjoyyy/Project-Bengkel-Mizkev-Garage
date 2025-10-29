@@ -16,65 +16,32 @@
     @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
-    }
+    } 
     </style>
+
     <div class="row">
-        <div class="col-12 d-flex justify-content-between">
-            <div class="">
-                <h5 class="card-title"><strong>{{ $title }}</strong></h5>
-                <p class="card-text">Manajemen Data Customer.</p>
-            </div>
-            <form action="{{ route('management-customer') }}" method="GET" class="d-flex justify-content-end mb-3" style="gap: 10px;">
-                <input type="text" name="search" class="form-control shadow-sm" 
-                placeholder="Cari customer" 
-                style="width: 350px; border-radius: 10px;"
-                value="{{ request('search') }}">
-
-                <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
-                    <i class="bi bi-search me-1"></i> Cari
-                </button>
-            </form>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCustomer">+ Tambah Customer</button>
-
-            <div class="modal fade" id="addCustomer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <form method="POST" action="{{ route('create-customer') }}" class="modal-content">
-                        @csrf
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Customer</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mt-3">
-                                <label for="nama_customer">Nama Customer</label>
-                                <input type="text" class="form-control" required placeholder="Masukkan nama customer"
-                                    name="nama_customer" id="nama_customer">
-                            </div>
-                            <div class="mt-3">
-                                <label for="no_telp_customer">Nomor Telepon</label>
-                                <input type="text" class="form-control" required placeholder="Masukkan nomor telepon"
-                                    name="no_telp_customer" id="no_telp_customer"  oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                            </div>
-                            <div class="mt-3">
-                                <label for="alamat_customer">Alamat</label>
-                                <input type="text" class="form-control" required placeholder="Masukkan alamat"
-                                    name="alamat_customer" id="alamat_customer">
-                            </div>
-                            <div class="mt-3">
-                                <label for="email_customer">Email</label>
-                                <input type="email" class="form-control" required placeholder="Masukkan email"
-                                    name="email_customer" id="email_customer">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="card-title"><strong>{{ $title }}</strong></h5>
+            <p class="card-text">Manajemen Data Customer.</p>
         </div>
+
+        {{-- FORM PENCARIAN --}}
+        <form action="{{ route('management-customer') }}" method="GET" 
+              class="d-flex align-items-center gap-2">
+            <input type="text" name="search" class="form-control shadow-sm" 
+                   placeholder="Cari customer..." 
+                   style="width: 300px; border-radius: 10px;" 
+                   value="{{ request('search') }}">
+            <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
+                <i class="bi bi-search me-1"></i> Cari
+            </button>
+        </form>
+
+        <a href="{{ route('create-customer-form') }}" class="btn btn-success">+ Tambah Customer</a>
     </div>
+</div>
+
 
     @if (session()->has('success'))
         <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
@@ -91,9 +58,9 @@
                         <table class="table">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>#</th>
+                                    <th>NO</th>
                                     <th>ID Customer</th>
-                                    <th>Nama</th>
+                                    <th>Nama Customer</th>
                                     <th>No Telepon</th>
                                     <th>Alamat</th>
                                     <th>Email</th>
@@ -110,57 +77,10 @@
                                         <td>{{ $item->alamat_customer }}</td>
                                         <td>{{ $item->email_customer }}</td>
                                         <td>
-                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="{{ '#edit' . $item->id_customer }}"><i
-                                                    class="bi bi-pencil-square"></i></button>
-                                            <div class="modal fade" id="{{ 'edit' . $item->id_customer }}" tabindex="-1"
-                                                aria-labelledby="editCustomerLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <form method="POST"
-                                                        action="{{ route('update-customer', $item->id_customer) }}"
-                                                        class="modal-content">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="editCustomerLabel">Edit Customer
-                                                            </h1>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="mt-3">
-                                                                <label for="nama_customer">Nama Customer</label>
-                                                                <input type="text" value="{{ $item->nama_customer }}"
-                                                                    class="form-control" required name="nama_customer"
-                                                                    id="nama_customer">
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label for="no_telp_customer">Nomor Telepon</label>
-                                                                <input type="text" value="{{ $item->no_telp_customer }}"
-                                                                    class="form-control" required name="no_telp_customer"
-                                                                    id="no_telp_customer" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label for="alamat_customer">Alamat</label>
-                                                                <input type="text" value="{{ $item->alamat_customer }}"
-                                                                    class="form-control" required name="alamat_customer"
-                                                                    id="alamat_customer">
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label for="email_customer">Email</label>
-                                                                <input type="email" value="{{ $item->email_customer }}"
-                                                                    class="form-control" required name="email_customer"
-                                                                    id="email_customer">
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Batal</button>
-                                                            <button type="submit" class="btn btn-primary">Simpan</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                           <!-- Tombol edit baru -->
+                                            <a href="{{ route('edit-customer-form', $item->id_customer) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i>
+                                            </a>
 
                                             <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="{{ '#delete' . $item->id_customer }}"><i

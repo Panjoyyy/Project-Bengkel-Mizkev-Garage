@@ -13,6 +13,7 @@ class StaffSeeder extends Seeder
     public function run(): void
     {
         Staff::create([
+            'id_staff' => 'ST001',
             'username' => 'brian',
             'password' => bcrypt('123admin456'),
             'nama_staff' => 'Brian',
@@ -21,6 +22,7 @@ class StaffSeeder extends Seeder
         ]);
 
         Staff::create([
+            'id_staff' => 'ST002',
             'username' => 'mahen',
             'password' => bcrypt('mahen21'),
             'nama_staff' => 'Mahen',

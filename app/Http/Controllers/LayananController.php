@@ -8,14 +8,45 @@ use Illuminate\Support\Facades\File;
 
 class LayananController extends Controller
 {
-    // Tampilkan semua layanan
-    public function showManagementService()
+
+    public function showManagementService(Request $request)
+{
+    $search = $request->input('search');
+    $query = Layanan::query();
+
+    if ($search) {
+        $services = $query->where('nama_layanan', 'like', "%{$search}%")
+            ->orWhere('id_layanan', 'like', "%{$search}%")
+            ->get();
+
+        if ($services->count() > 0) {
+            $message = "Data ID/Nama layanan '{$search}' berhasil ditemukan.";
+            $alertType = 'success';
+        } else {
+            $message = "Tidak ada hasil untuk pencarian '{$search}'.";
+            $alertType = 'warning';
+        }
+    } else {
+        $services = Layanan::all();
+        $message = null;
+        $alertType = null;
+    }
+
+    $data = [
+        'title'     => 'Manajemen Kelola Layanan',
+        'services'  => $services,
+        'message'   => $message,
+        'alertType' => $alertType
+    ];
+
+    return view('management-layanan', $data);
+}
+    // Tampilkan form tambah layanan
+    public function showCreateForm()
     {
-        $data = [
-            'title'     => 'Manajemen Kelola Layanan',
-            'services'  => Layanan::all()
-        ];
-        return view('management-layanan', $data);
+        return view('create-layanan', [
+        'title' => 'Tambah Layanan'
+        ]);
     }
 
     // Tambah layanan
@@ -30,6 +61,7 @@ class LayananController extends Controller
         ]);
 
         $layanan = new Layanan();
+        $layanan->id_layanan = Layanan::generateLayananId(); 
         $layanan->nama_layanan = $request->nama_layanan;
         $layanan->deskripsi_layanan = $request->deskripsi_layanan;
         $layanan->lokasi_layanan = $request->lokasi_layanan;
@@ -44,8 +76,17 @@ class LayananController extends Controller
 
         $layanan->save();
 
-        return back()->with('success', 'Berhasil menambahkan data layanan');
+        return redirect()->route('management-layanan')
+                         ->with('success', 'Berhasil menambahkan data layanan');
     }
+
+     // Tampilkan form edit layanan
+    public function editServiceForm($id_layanan)
+    {
+    $service = Layanan::findOrFail($id_layanan);
+    return view('edit-layanan', compact('service'));
+    }
+
 
     // Update layanan
     public function updateService(Request $request, $id_layanan)
@@ -79,7 +120,8 @@ class LayananController extends Controller
 
         $layanan->save();
 
-        return back()->with('success', 'Berhasil memperbarui data layanan');
+        return redirect()->route('management-layanan')
+                         ->with('success', 'Berhasil memperbarui data layanan');
     }
 
     // Hapus layanan

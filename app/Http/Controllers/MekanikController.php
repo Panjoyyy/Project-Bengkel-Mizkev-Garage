@@ -7,44 +7,48 @@ use Illuminate\Support\Facades\File;
 
 class MekanikController extends Controller
 {
-    
+    // Tampilkan halaman management
     public function showManagementMechanic(Request $request)
     {
-    $search = $request->input('search');
-    $query = Mechanic::query();
+        $search = $request->input('search');
+        $query = Mechanic::query();
 
-    if ($search) {
-        $mechanics = $query->where('mechanic_name', 'like', "%{$search}%")
-            ->orWhere('id_mechanic', 'like', "%{$search}%")
-            ->get();
+        if ($search) {
+            $mechanics = $query->where('mechanic_name', 'like', "%{$search}%")
+                ->orWhere('id_mechanic', 'like', "%{$search}%")
+                ->get();
 
-        if ($mechanics->count() > 0) {
-            $message = "Data ID/Nama mekanik '{$search}' berhasil ditemukan.";
-            $alertType = 'success';
+            $message = $mechanics->count() > 0
+                ? "Data ID/Nama mekanik '{$search}' berhasil ditemukan."
+                : "Tidak ada hasil untuk pencarian '{$search}'.";
+            $alertType = $mechanics->count() > 0 ? 'success' : 'warning';
         } else {
-            $message = "Tidak ada hasil untuk pencarian '{$search}'.";
-            $alertType = 'warning';
+            $mechanics = Mechanic::all();
+            $message = null;
+            $alertType = null;
         }
-    } else {
-        $mechanics = Mechanic::all();
-        $message = null;
-        $alertType = null;
+
+        return view('management-mechanic', [
+            'title'     => 'Manajemen Kelola Mekanik',
+            'mechanics' => $mechanics,
+            'message'   => $message,
+            'alertType' => $alertType
+        ]);
     }
 
-    $data = [
-        'title'     => 'Manajemen Kelola Mekanik',
-        'mechanics' => $mechanics,
-        'message'   => $message,
-        'alertType' => $alertType
-    ];
-
-    return view('management-mechanic', $data);
+    // Tampilkan form tambah mekanik
+    public function createMechanicForm()
+    {
+        return view('create-mechanic', [
+            'title' => 'Tambah Mekanik'
+        ]);
     }
 
+    // Simpan mekanik baru
     public function createMechanic(Request $request)
     {
         $mechanic = new Mechanic();
-
+        $mechanic->id_mechanic = Mechanic::generateMechanicId();
         $mechanic->mechanic_name = $request->mechanic_name;
         $mechanic->mechanic_phone = $request->mechanic_phone;
 
@@ -57,12 +61,25 @@ class MekanikController extends Controller
 
         $mechanic->save();
 
-        return back()->with('success', 'Berhasil menambahkan data mekanik');
+        return redirect()->route('management-mechanic')
+                         ->with('success', 'Berhasil menambahkan data mekanik');
     }
 
+    // Tampilkan form edit mekanik
+    public function editMechanicForm($id)
+    {
+        $mechanic = Mechanic::findOrFail($id);
+
+        return view('edit-mechanic', [
+            'title' => 'Edit Mekanik',
+            'mechanic' => $mechanic
+        ]);
+    }
+
+    // Update mekanik
     public function updateMechanic(Request $request, $id_mechanic)
     {
-        $mechanic = Mechanic::find($id_mechanic);
+        $mechanic = Mechanic::findOrFail($id_mechanic);
         $mechanic->mechanic_name = $request->mechanic_name;
         $mechanic->mechanic_phone = $request->mechanic_phone;
 
@@ -80,22 +97,21 @@ class MekanikController extends Controller
 
         $mechanic->save();
 
-        return back()->with('success', 'Berhasil memperbarui data mekanik');
+        return redirect()->route('management-mechanic')
+                         ->with('success', 'Berhasil memperbarui data mekanik');
     }
 
-    public function deleteMechanic($id_mechanic)
+    // Hapus mekanik
+    public function deleteMechanic($id)
     {
-        $mechanic = Mechanic::find($id_mechanic);
-
-        if ($mechanic && $mechanic->mechanic_image) {
-            $imagePath = public_path('img/mechanics/' . $mechanic->mechanic_image);
-            if (File::exists($imagePath)) {
-                File::delete($imagePath);
-            }
+        $mechanic = Mechanic::findOrFail($id);
+        $oldImagePath = public_path('img/mechanics/' . $mechanic->mechanic_image);
+        if (File::exists($oldImagePath)) {
+            File::delete($oldImagePath);
         }
-
         $mechanic->delete();
 
-        return back()->with('success', 'Berhasil menghapus data mekanik');
+        return redirect()->route('management-mechanic')
+                         ->with('success', 'Berhasil menghapus data mekanik');
     }
 }

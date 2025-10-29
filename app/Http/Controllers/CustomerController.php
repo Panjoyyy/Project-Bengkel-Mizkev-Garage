@@ -58,34 +58,61 @@ class CustomerController extends Controller
     }
 
     // Tambah customer
-    public function createCustomer(Request $request)
+    // Tampilkan halaman tambah customer
+    public function createCustomer()
     {
+    $title = 'Tambah Customer';
+    return view('create-customer', compact('title'));
+    }
+
+    public function store(Request $request)
+{
+    $request->validate([
+        'nama_customer' => 'required|string|max:255',
+        'no_telp_customer' => 'required|string|max:15',
+        'alamat_customer' => 'required|string|max:255',
+        'email_customer' => 'required|email|max:255',
+    ]);
+
     $customer = new Customer();
-
+    $customer->id_customer = Customer::generateCustomerId();
     $customer->nama_customer = $request->nama_customer;
     $customer->no_telp_customer = $request->no_telp_customer;
     $customer->alamat_customer = $request->alamat_customer;
     $customer->email_customer = $request->email_customer;
-
     $customer->save();
 
-    return back()->with('success', 'Berhasil menambahkan data customer');
-    }
+    return redirect()->route('management-customer')
+                     ->with('success', 'Berhasil menambahkan data customer');
+}
 
-    // Update customer
-    public function updateCustomer(Request $request, $id_customer)
-    {
-    $customer = Customer::find($id_customer);
+// Tampilkan halaman edit
+public function edit($id_customer)
+{
+    $customer = Customer::findOrFail($id_customer);
+    return view('edit-customer', compact('customer'))->with('title', 'Edit Customer');
+}
 
+// Update data customer
+public function updateCustomer(Request $request, $id_customer)
+{
+    $request->validate([
+        'nama_customer' => 'required|string|max:255',
+        'no_telp_customer' => 'required|string|max:20',
+        'alamat_customer' => 'required|string|max:255',
+        'email_customer' => 'required|email|max:255',
+    ]);
+
+    $customer = Customer::findOrFail($id_customer);
     $customer->nama_customer = $request->nama_customer;
     $customer->no_telp_customer = $request->no_telp_customer;
     $customer->alamat_customer = $request->alamat_customer;
     $customer->email_customer = $request->email_customer;
-
     $customer->save();
 
-    return back()->with('success', 'Berhasil memperbarui data customer');
-    }
+    return redirect()->route('management-customer')
+                     ->with(['message' => 'Customer berhasil diupdate!', 'alertType' => 'success']);
+}
 
     // Hapus customer
     public function deleteCustomer($id_customer)

@@ -32,36 +32,65 @@ Route::get('/porto', function () {
     })->name('dashboard');
 
     // Route Management Data Customer
+    // Halaman index customer (tabel + search)
     Route::get('/management-customer', [CustomerController::class, 'showManagementCustomer'])->name('management-customer');
-    Route::post('/create-customer', [CustomerController::class, 'createCustomer'])->name('create-customer');
+    // Halaman tambah customer (form di halaman baru)
+    Route::get('/create-customer', [CustomerController::class, 'createCustomer'])->name('create-customer-form');
+    // Submit form tambah customer
+    Route::post('/create-customer', [CustomerController::class, 'store'])->name('create-customer');
+    // Tampilkan form edit customer
+    Route::get('/edit-customer/{id_customer}', [CustomerController::class, 'edit'])->name('edit-customer-form');
+    // Update customer
     Route::put('/update-customer/{id_customer}', [CustomerController::class, 'updateCustomer'])->name('update-customer');
+    // Delete customer
     Route::delete('/delete-customer/{id_customer}', [CustomerController::class, 'deleteCustomer'])->name('delete-customer');
 
+
     // Route Management Data Motor
+    // Management Data Motor
     Route::get('/management-motors', [MotorController::class, 'index'])->name('motor.index');
-    Route::get('/management-motor', [MotorController::class, 'index'])->name('management-motors');
-    Route::post('/motor/store', [MotorController::class, 'store'])->name('motor.store');
-    Route::put('/motor/update/{id}', [MotorController::class, 'update'])->name('motor.update');
-    Route::delete('/motor/destroy/{id}', [MotorController::class, 'destroy'])->name('motor.destroy');
+
+    // Form Tambah Motor
+    Route::get('/management-motors/create', [MotorController::class, 'create'])->name('motor.create');
+    Route::post('/management-motors/store', [MotorController::class, 'store'])->name('motor.store');
+
+    // Form Edit Motor
+    Route::get('/management-motors/{id}/edit', [MotorController::class, 'edit'])->name('motor.edit');
+    Route::put('/management-motors/{id}/update', [MotorController::class, 'update'])->name('motor.update');
+
+    // Hapus Motor
+    Route::delete('/management-motors/{id}/destroy', [MotorController::class, 'destroy'])->name('motor.destroy');
 
     // Route Management Data Sparepart
-    Route::get('/management-spareparts', [SparepartController::class, 'index'])->name('spareparts.index');
-    Route::post('/management-spareparts', [SparepartController::class, 'store'])->name('spareparts.store');
-    Route::get('/management-spareparts/{id}/edit', [SparepartController::class, 'edit'])->name('spareparts.edit');
-    Route::put('/management-spareparts/{id}', [SparepartController::class, 'update'])->name('spareparts.update');
-    Route::delete('/management-spareparts/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
+    // Management Sparepart
+    Route::get('/management-sparepart', [SparepartController::class, 'index'])->name('spareparts.index');
+    // Tambah sparepart
+    Route::get('/create-sparepart', [SparepartController::class, 'createForm'])->name('spareparts.create-form');
+    Route::post('/create-sparepart', [SparepartController::class, 'store'])->name('spareparts.store');
+    // Edit sparepart
+    Route::get('/edit-sparepart/{id}', [SparepartController::class, 'editForm'])->name('spareparts.edit-form');
+    Route::put('/update-sparepart/{id}', [SparepartController::class, 'update'])->name('spareparts.update');
+    // Hapus sparepart
+    Route::delete('/delete-sparepart/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
 
-    // Route Management Data Servis
-   // Halaman manajemen servis
-    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])
-    ->name('management-servis');
+
+   // Route Management Data Servis
+    // Halaman manajemen servis
+    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])->name('management-servis');
+
+    // Halaman tambah servis
+    Route::get('/servis/create', [ServisController::class, 'createServisView'])->name('servis.create');
 
     // CRUD Servis
-    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');  // <--- sesuaikan Blade
+    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('servis.getMotors');
+    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
+    Route::get('/servis/edit/{id_servis}', [ServisController::class, 'editServisView'])->name('servis.edit');
     Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
-    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy'); 
+    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
 
-    Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
+    // AJAX: dapatkan motor berdasarkan customer
+    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
+   
     // ----------------------------
     // ---------------------
     // Order
@@ -73,17 +102,32 @@ Route::get('/porto', function () {
     // Management Layanan
     // ---------------------
     Route::get('/management-layanan', [LayananController::class, 'showManagementService'])->name('management-layanan');
-    Route::post('/create-service', [LayananController::class, 'createService'])->name('create-service');
-    Route::put('/update-service/{id_service}', [LayananController::class, 'updateService'])->name('update-service');
-    Route::delete('/delete-service/{id_service}', [LayananController::class, 'deleteService'])->name('delete-service');
 
+    // Tambah layanan
+    Route::get('/create-layanan', [LayananController::class, 'showCreateForm'])->name('create-service-form');
+    Route::post('/create-layanan', [LayananController::class, 'createService'])->name('create-service');
+
+    // Edit layanan
+    Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
+    Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
+    Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
+
+    // Hapus layanan
+    Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
     // ---------------------
     // Management Mechanic
     // ---------------------
+    // Management mekanik
     Route::get('/management-mechanic', [MekanikController::class, 'showManagementMechanic'])->name('management-mechanic');
+    // Form tambah & simpan mekanik
+    Route::get('/create-mechanic', [MekanikController::class, 'createMechanicForm'])->name('create-mechanic-form');
     Route::post('/create-mechanic', [MekanikController::class, 'createMechanic'])->name('create-mechanic');
-    Route::put('/update-mechanic/{id_mechanic}', [MekanikController::class, 'updateMechanic'])->name('update-mechanic');
-    Route::delete('/delete-mechanic/{id_mechanic}', [MekanikController::class, 'deleteMechanic'])->name('delete-mechanic');
+    // Form edit & update mekanik
+    Route::get('/edit-mechanic/{id}', [MekanikController::class, 'editMechanicForm'])->name('edit-mechanic-form');
+    Route::put('/update-mechanic/{id}', [MekanikController::class, 'updateMechanic'])->name('update-mechanic');
+    // Hapus mekanik
+    Route::delete('/delete-mechanic/{id}', [MekanikController::class, 'deleteMechanic'])->name('delete-mechanic');
+
 
     // ---------------------
     // Transaction

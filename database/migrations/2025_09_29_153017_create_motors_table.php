@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('motors', function (Blueprint $table) {
-            $table->id('id_motor');
+            $table->string('id_motor', 20)->primary();
             $table->string('no_plat_motor');
             $table->string('merk_motor');
             $table->string('warna_motor');
             $table->year('tahun_motor');
+            $table->string('id_customer', 20)->nullable();
+            $table->foreign('id_customer')->references('id_customer')->on('customers')->onDelete('set null');
             $table->timestamps();
-            $table->foreignId('id_customer')->nullable()->constrained('customers', 'id_customer')->cascadeOnNull();
+
         });
     }
 

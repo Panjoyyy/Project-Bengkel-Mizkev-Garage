@@ -9,16 +9,28 @@ class Layanan extends Model
 {
     use HasFactory;
 
-    // Nama tabel (default Laravel bakal cari "layanans", jadi harus di-set)
     protected $table = 'layanan';
-    // Primary key custom
     protected $primaryKey = 'id_layanan';
-    // Kolom yang boleh diisi mass assignment
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
+        'id_layanan',
         'nama_layanan',
         'deskripsi_layanan',
         'lokasi_layanan',
         'harga_layanan',
         'foto_layanan',
     ];
+
+     public static function generateLayananId()
+    {
+        $lastLayanan = self::orderBy('id_layanan', 'desc')->first();
+        if (!$lastLayanan) {
+            return 'L001';
+        }
+
+        $lastNumber = (int) substr($lastLayanan->id_layanan, 1);
+        $newNumber = $lastNumber + 1;
+        return 'L' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
 }

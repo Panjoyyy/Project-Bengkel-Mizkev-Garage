@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('spareparts', function (Blueprint $table) {
-            $table->id('id_sparepart');
+            $table->string('id_sparepart', 20)->primary();
             $table->string('nama_sparepart');
             $table->integer('stok_sparepart');
             $table->decimal('harga_sparepart', 12, 2);

@@ -39,7 +39,7 @@
                         </a>
                     </li>
                     <li class="sidebar-item {{ request()->is('management-motors') ? 'sidebar-active' : '' }}">
-                        <a href="{{ route('management-motors') }}" class="sidebar-link">
+                        <a href="{{ route('motor.index') }}" class="sidebar-link">
                             <i class="bi bi-bicycle"></i>
                             <span>Manajemen Kelola Motor</span>
                         </a>

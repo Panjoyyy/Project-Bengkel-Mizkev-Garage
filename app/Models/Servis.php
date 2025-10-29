@@ -10,13 +10,27 @@ class Servis extends Model
     use HasFactory;
     protected $table = 'servis';
     protected $primaryKey = 'id_servis';
+    public $incrementing = false; 
+    protected $keyType = 'string';
     protected $fillable = [
+        'id_servis',
         'id_motor',
-        'id_mekanik',
+        'id_mechanic',
         'id_staff',
         'keluhan',
         'tanggal_servis'
     ];
+
+     public static function generateServisId()
+    {
+        $lastServis = self::orderBy('id_servis', 'desc')->first();
+        if (!$lastServis) {
+            return 'SRC001';
+        }
+        $lastNumber = (int) preg_replace('/\D/', '', $lastServis->id_servis);
+        $newNumber = $lastNumber + 1;
+        return 'SRC' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
 
     // Relasi ke Motor
     public function motor()

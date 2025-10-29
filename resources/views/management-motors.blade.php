@@ -1,209 +1,123 @@
 @extends('admin')
 
 @section('content')
+@if (!empty($message))
+    <div class="alert alert-{{ $alertType }} shadow-sm d-flex align-items-center gap-2 mt-3 fade show"
+         style="border-left: 5px solid {{ $alertType === 'success' ? '#1abc9c' : '#f1c40f' }};
+                background-color: {{ $alertType === 'success' ? '#ecfdf5' : '#fffbea' }};
+                color: {{ $alertType === 'success' ? '#065f46' : '#92400e' }};
+                border-radius: 8px; animation: fadeIn 0.4s ease;">
+        <i class="bi {{ $alertType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
+        <span>{{ $message }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
-    <div class="row">
-        <div class="col-12 d-flex justify-content-between">
-            <div class="">
-                <h5 class="card-title"><strong>{{ $title }}</strong></h5>
-                <p class="card-text">Manajemen Data Motor.</p>
-            </div>
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+} 
+</style>
 
-            <form action="{{ route('management-motors') }}" method="GET" class="d-flex justify-content-end mb-3" style="gap: 10px;">
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="card-title"><strong>{{ $title }}</strong></h5>
+            <p class="card-text">Manajemen Data Motor.</p>
+        </div>
+
+        {{-- FORM PENCARIAN --}}
+        <form action="{{ route('motor.index') }}" method="GET" 
+              class="d-flex align-items-center gap-2">
             <input type="text" name="search" class="form-control shadow-sm" 
-            placeholder="Cari motor" 
-            style="width: 350px; border-radius: 10px;">
-
+                   placeholder="Cari motor..." 
+                   style="width: 300px; border-radius: 10px;" 
+                   value="{{ request('search') }}">
             <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
-            <i class="bi bi-search me-1"></i> Cari
+                <i class="bi bi-search me-1"></i> Cari
             </button>
         </form>
-            
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMotor">+ Tambah Motor</button>
 
-            <!-- Tambah Motor -->
-            <div class="modal fade" id="addMotor" tabindex="-1" aria-labelledby="addMotorLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <form method="POST" action="{{ route('motor.store') }}" class="modal-content">
-                        @csrf
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="addMotorLabel">Tambah Motor</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mt-3">
-                                <label>No Plat Motor</label>
-                                <input type="text" name="no_plat_motor" class="form-control" required>
-                            </div>
-                            <div class="mt-3">
-                                <label>Merk Motor</label>
-                                <input type="text" name="merk_motor" class="form-control" required>
-                            </div>
-                            <div class="mt-3">
-                                <label>Warna Motor</label>
-                                <input type="text" name="warna_motor" class="form-control" required>
-                            </div>
-                            <div class="mt-3">
-                                <label for="tahun_motor">Tahun Motor</label>
-                                <select class="form-select" name="tahun_motor" id="tahun_motor" required>
-                                <option value="" selected disabled>Pilih Tahun</option>
-                                @for ($year = date('Y'); $year >= 1990; $year--)
-                                <option value="{{ $year }}">{{ $year }}</option>
-                                @endfor
-                                </select>
-                            </div>
-                            <div class="mt-3">
-                                <label>Pemilik (Customer)</label>
-                                <select name="id_customer" class="form-control" required>
-                                    <option value="">--Pilih Customer--</option>
-                                    @foreach($customers as $customer)
-                                        <option value="{{ $customer->id_customer }}">{{ $customer->nama_customer }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <a href="{{ route('motor.create') }}" class="btn btn-success">+ Tambah Motor</a>
     </div>
+</div>
 
-    @if(session()->has('success'))
-        <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
 
-    <div class="row my-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>ID Motor</th>
-                                    <th>No Plat</th>
-                                    <th>Merk</th>
-                                    <th>Warna</th>
-                                    <th>Tahun</th>
-                                    <th>ID Customer</th>
-                                    <th>Nama Customer</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($motors as $motor)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $motor->id_motor }}</td>
-                                        <td>{{ $motor->no_plat_motor }}</td>
-                                        <td>{{ $motor->merk_motor }}</td>
-                                        <td>{{ $motor->warna_motor }}</td>
-                                        <td>{{ $motor->tahun_motor }}</td>
-                                        <td>{{ $motor->id_customer }}</td>
-                                        <td>{{ $motor->customer->nama_customer ?? '-' }}</td>
-                                        <td>
-                                            <!-- Edit -->
-                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#editMotor{{ $motor->id_motor }}"><i
-                                                    class="bi bi-pencil-square"></i></button>
-                                            <div class="modal fade" id="editMotor{{ $motor->id_motor }}" tabindex="-1"
-                                                aria-labelledby="editMotorLabel" aria-hidden="true">
+@if(session()->has('success'))
+    <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+<div class="row my-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <!-- Hanya gunakan class "table" -->
+                    <table class="table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>NO</th>
+                                <th>ID Motor</th>
+                                <th>No Plat</th>
+                                <th>Merk Motor</th>
+                                <th>Warna</th>
+                                <th>Tahun</th>
+                                <th>ID Customer</th>
+                                <th>Nama Customer</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($motors as $motor)
+                                <tr style="vertical-align: middle">
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $motor->id_motor }}</td>
+                                    <td>{{ $motor->no_plat_motor }}</td>
+                                    <td>{{ $motor->merk_motor }}</td>
+                                    <td>{{ $motor->warna_motor }}</td>
+                                    <td>{{ $motor->tahun_motor }}</td>
+                                    <td>{{ $motor->id_customer }}</td>
+                                    <td>{{ $motor->customer->nama_customer ?? '-' }}</td>
+                                    <td>
+                                        <a href="{{ route('motor.edit', $motor->id_motor) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+
+                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#deleteMotor{{ $motor->id_motor }}"><i
+                                                class="bi bi-trash"></i></button>
+                                        <div class="modal fade" id="deleteMotor{{ $motor->id_motor }}" tabindex="-1"
+                                            aria-labelledby="deleteMotorLabel" aria-hidden="true">
+                                            <form action="{{ route('motor.destroy', $motor->id_motor) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
                                                 <div class="modal-dialog">
-                                                    <form method="POST" action="{{ route('motor.update', $motor->id_motor) }}"
-                                                        class="modal-content">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="editMotorLabel">Edit Motor</h1>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
+                                                    <div class="modal-content">
                                                         <div class="modal-body">
-                                                            <div class="mt-3">
-                                                                <label>No Plat Motor</label>
-                                                                <input type="text" name="no_plat_motor" class="form-control"
-                                                                    value="{{ $motor->no_plat_motor }}" required>
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label>Merk Motor</label>
-                                                                <input type="text" name="merk_motor" class="form-control"
-                                                                    value="{{ $motor->merk_motor }}" required>
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label>Warna Motor</label>
-                                                                <input type="text" name="warna_motor" class="form-control"
-                                                                    value="{{ $motor->warna_motor }}" required>
-                                                            </div>
-                                                           <div class="mt-3">
-                                                                <label for="tahun_motor">Tahun Motor</label>
-                                                                <select name="tahun_motor" id="tahun_motor" class="form-control" required>
-                                                                <option value="" disabled>Pilih Tahun</option>
-                                                                    @for ($year = date('Y'); $year >= 1990; $year--)
-                                                                <option value="{{ $year }}" {{ $motor->tahun_motor == $year ? 'selected' : '' }}>
-                                                                    {{ $year }}
-                                                                </option>
-                                                                    @endfor
-                                                                </select>
-                                                            </div>
-                                                            <div class="mt-3">
-                                                                <label>Pemilik (Customer)</label>
-                                                                <select name="id_customer" class="form-control" required>
-                                                                    <option value="">--Pilih Customer--</option>
-                                                                    @foreach($customers as $customer)
-                                                                        <option value="{{ $customer->id_customer }}" {{ $motor->id_customer == $customer->id_customer ? 'selected' : '' }}>{{ $customer->nama_customer }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
+                                                            Apakah anda yakin menghapus motor
+                                                            <strong>{{ $motor->no_plat_motor }}</strong>?
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">Batal</button>
-                                                            <button type="submit" class="btn btn-primary">Simpan</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-
-                                            <!-- Hapus -->
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#deleteMotor{{ $motor->id_motor }}"><i
-                                                    class="bi bi-trash"></i></button>
-                                            <div class="modal fade" id="deleteMotor{{ $motor->id_motor }}" tabindex="-1"
-                                                aria-labelledby="deleteMotorLabel" aria-hidden="true">
-                                                <form action="{{ route('motor.destroy', $motor->id_motor) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-body">
-                                                                Apakah anda yakin menghapus motor
-                                                                <strong>{{ $motor->no_plat_motor }}</strong>?
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Batal</button>
-                                                                <button type="submit" class="btn btn-danger">Hapus</button>
-                                                            </div>
+                                                            <button type="submit" class="btn btn-danger">Hapus</button>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection

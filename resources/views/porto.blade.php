@@ -207,12 +207,13 @@
                 <div class="row">
                     <div class="col-lg-6 mb-4 mb-lg-0">
                         <h4 class="fw-bold mb-3">Informasi Kontak</h4>
+                        <p><i class="bi bi-clock-fill me-2"></i><strong>Jam Buka:</strong> Senin - Sabtu, 08:00 - 17:00 WIB</p>
                         <p><i class="bi bi-geo-alt-fill me-2 text-danger"></i><a href="https://maps.app.goo.gl/M2W4rBk3dUeCht2L6?g_st=aw" target="_blank" class="text-decoration-none text-dark">Jl. Wuluh No.20, Nologaten, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281</a></p>
                         <p><i class="bi bi-envelope-fill me-2 text-danger"></i><a href="mailto:servis.motorku@gmail.com" class="text-decoration-none text-dark">miskevgarage@gmail.com</a></p>
                         <p><i class="bi bi-whatsapp me-2 text-success"></i><a href="https://wa.me/6285790677021?text=Halo%20saya%20mau%20servis%20motor" target="_blank" class="text-decoration-none text-dark">0857-9067-7021</a></p>
-                        <p><i class="bi bi-instagram me-2 text-danger"></i><a href="https://www.instagram.com/motorku_service" target="_blank" class="text-decoration-none text-dark">MiskevGarageOfficial</a></p>
-                        <p><i class="bi bi-tiktok me-2 text-dark"></i><a href="https://www.tiktok.com/@motorku_service" target="_blank" class="text-decoration-none text-dark">OfficialMizkev</a></p>
-                        <p><i class="bi bi-clock-fill me-2"></i><strong>Jam Buka:</strong> Senin - Sabtu, 08:00 - 17:00 WIB</p>
+                        <p><i class="bi bi-instagram me-2 text-danger"></i><a href="https://www.instagram.com/28performance_?igsh=MWd0bXZlcWV4NGp0cA==" target="_blank" class="text-decoration-none text-dark">MiskevGarageOfficial</a></p>
+                        <p><i class="bi bi-tiktok me-2 text-dark"></i><a href="https://www.tiktok.com/@enggabalapbalap?_t=ZS-90ko89EMNRS&_r=1" target="_blank" class="text-decoration-none text-dark">OfficialMizkevGarage</a></p>
+                        <p><i class="bi bi-youtube me-2 text-dark"></i><a href="https://youtube.com/@mizkevgarage176?si=1ZZ8RGiwl3WC4_vx" target="_blank" class="text-decoration-none text-dark">MIZKEV GARAGE</a></p>
                     </div>
                 <div class="col-lg-6">
                         <h4 class="fw-bold mb-3">Lokasi Kami</h4>
