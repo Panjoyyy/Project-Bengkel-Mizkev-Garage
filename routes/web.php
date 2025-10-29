@@ -10,22 +10,22 @@ use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
 
-// Route untuk menampilkan halaman porto brian
-Route::get('/porto', function () {
+    // Route untuk menampilkan halaman porto brian
+    Route::get('/porto', function () {
     return view('porto');
 });
 
     // Halaman Utama (Public)
     Route::get('/', [CustomerController::class, 'showHomeCustomer'])->name('porto');
 
-// Route untuk Tamu (Belum Login)
-Route::middleware('guest')->group(function () {
+    // Route untuk Tamu (Belum Login)
+    Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'handleLogin'])->name('handleLogin');
 });
 
-// Route untuk yang sudah login (Auth)
-Route::middleware(['auth'])->group(function () {
+    // Route untuk yang sudah login (Auth)
+    Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -49,15 +49,12 @@ Route::middleware(['auth'])->group(function () {
     // Route Management Data Motor
     // Management Data Motor
     Route::get('/management-motors', [MotorController::class, 'index'])->name('motor.index');
-
     // Form Tambah Motor
     Route::get('/management-motors/create', [MotorController::class, 'create'])->name('motor.create');
     Route::post('/management-motors/store', [MotorController::class, 'store'])->name('motor.store');
-
     // Form Edit Motor
     Route::get('/management-motors/{id}/edit', [MotorController::class, 'edit'])->name('motor.edit');
     Route::put('/management-motors/{id}/update', [MotorController::class, 'update'])->name('motor.update');
-
     // Hapus Motor
     Route::delete('/management-motors/{id}/destroy', [MotorController::class, 'destroy'])->name('motor.destroy');
 
@@ -77,10 +74,8 @@ Route::middleware(['auth'])->group(function () {
    // Route Management Data Servis
     // Halaman manajemen servis
     Route::get('/management-servis', [ServisController::class, 'showManagementServis'])->name('management-servis');
-
     // Halaman tambah servis
     Route::get('/servis/create', [ServisController::class, 'createServisView'])->name('servis.create');
-
     // CRUD Servis
     Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('servis.getMotors');
     Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
@@ -97,7 +92,6 @@ Route::middleware(['auth'])->group(function () {
     // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
     Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
     // ----------------------------
-
     // AJAX: dapatkan motor berdasarkan customer
     Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
    
@@ -112,18 +106,16 @@ Route::middleware(['auth'])->group(function () {
     // Management Layanan
     // ---------------------
     Route::get('/management-layanan', [LayananController::class, 'showManagementService'])->name('management-layanan');
-
     // Tambah layanan
     Route::get('/create-layanan', [LayananController::class, 'showCreateForm'])->name('create-service-form');
     Route::post('/create-layanan', [LayananController::class, 'createService'])->name('create-service');
-
     // Edit layanan
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
     Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
-
     // Hapus layanan
     Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
+    
     // ---------------------
     // Management Mechanic
     // ---------------------
