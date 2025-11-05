@@ -67,10 +67,10 @@
                     </a>
                     </li>
 
-                    <li class="sidebar-item {{ request()->is('transaction') ? 'sidebar-active' : '' }}">
-                        <a href="{{ route('transaction') }}" class="sidebar-link">
+                    <li class="sidebar-item {{ request()->is('management-transaction') || request()->is('transaksi*') ? 'sidebar-active' : '' }}">
+                        <a href="{{ route('transaksi.index') }}" class="sidebar-link">
                             <i class="bi bi-ui-checks"></i>
-                            <span>Transaksi</span>
+                            <span>Manajemen Kelola Transaksi</span>
                         </a>
 
                     </li>

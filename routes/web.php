@@ -9,6 +9,7 @@ use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
+use App\Http\Controllers\TransaksiController;
 
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
@@ -134,8 +135,10 @@ use App\Http\Controllers\ServisController;
     // ---------------------
     // Transaction
     // ---------------------
-    Route::get('/transaction', [AdminController::class, 'showTransaction'])->name('transaction');
-
+    Route::get('/management-transaction', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::get('/create-transaction', [TransaksiController::class, 'create'])->name('transaksi.create');
+    Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
+    
     // ---------------------
     // Logout
     // ---------------------

@@ -1,10 +1,10 @@
 @extends('admin')
 
 @section('content')
+<h5 class="card-title"><strong>Tambah Servis</strong></h5>
+<p class="card-text">Masukkan data servis baru.</p>
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Tambah Servis</h5>
-
         <form method="POST" action="{{ route('servis.store') }}">
             @csrf
             <div class="mb-3">
