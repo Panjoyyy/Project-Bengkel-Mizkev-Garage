@@ -77,7 +77,6 @@
                 <label for="keluhan">Keluhan</label>
                 <textarea class="form-control" name="keluhan" rows="3" required>{{ $servis->keluhan }}</textarea>
             </div>
-
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
             <a href="{{ route('management-servis') }}" class="btn btn-secondary">Batal</a>
         </form>

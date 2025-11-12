@@ -88,6 +88,8 @@ use App\Http\Controllers\TransaksiController;
     Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
     Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
     Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
+    Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updateStatus'])->name('servis.updateStatus');
+
     
     // --- ROUTE BARU UNTUK AJAX ---
     // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
