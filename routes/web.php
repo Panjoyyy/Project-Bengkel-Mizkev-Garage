@@ -9,15 +9,19 @@ use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
-use App\Http\Controllers\TransaksiController;
 
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
     return view('porto');
 });
 
-    // Halaman Utama (Public)
-    Route::get('/', [CustomerController::class, 'showHomeCustomer'])->name('porto');
+    // Halaman Utama (Public) - Redirect ke Staff Login
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
+    
+    // Halaman Porto (Customer View)
+    Route::get('/home', [CustomerController::class, 'showHomeCustomer'])->name('porto');
 
     // Route untuk Tamu (Belum Login)
     Route::middleware('guest')->group(function () {
@@ -28,9 +32,7 @@ use App\Http\Controllers\TransaksiController;
     // Route untuk yang sudah login (Auth)
     Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'showDashboard'])->name('dashboard');
 
     // Route Management Data Customer
     // Halaman index customer (tabel + search)
@@ -137,10 +139,13 @@ use App\Http\Controllers\TransaksiController;
     // ---------------------
     // Transaction
     // ---------------------
-    Route::get('/management-transaction', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::get('/create-transaction', [TransaksiController::class, 'create'])->name('transaksi.create');
-    Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
-    
+    Route::get('/transaction', [AdminController::class, 'showTransaction'])->name('transaction');
+    Route::get('/transaction/create', [AdminController::class, 'createTransactionForm'])->name('transaction.create');
+    Route::post('/transaction/store', [AdminController::class, 'createTransaction'])->name('transaction.store');
+    Route::get('/transaction/edit/{id}', [AdminController::class, 'editTransactionForm'])->name('transaction.edit');
+    Route::put('/transaction/update/{id}', [AdminController::class, 'updateTransaction'])->name('transaction.update');
+    Route::delete('/transaction/delete/{id}', [AdminController::class, 'deleteTransaction'])->name('transaction.delete');
+
     // ---------------------
     // Logout
     // ---------------------

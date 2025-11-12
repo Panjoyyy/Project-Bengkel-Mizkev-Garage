@@ -1,59 +1,49 @@
-@extends('admin')
+@extends('layouts.admin-modern')
 
 @section('content')
-
-{{-- Alert pesan pencarian --}}
-@if (!empty($message))
-    <div class="alert alert-{{ $alertType }} shadow-sm d-flex align-items-center gap-2 mt-3 fade show"
-         style="border-left: 5px solid {{ $alertType === 'success' ? '#1abc9c' : '#f1c40f' }};
-                background-color: {{ $alertType === 'success' ? '#ecfdf5' : '#fffbea' }};
-                color: {{ $alertType === 'success' ? '#065f46' : '#92400e' }};
-                border-radius: 8px; animation: fadeIn 0.4s ease;">
-        <i class="bi {{ $alertType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
-        <span>{{ $message }}</span>
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
-<style>
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-</style>
-
-<div class="row">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-        <div>
-            <h5 class="card-title"><strong>{{ $title }}</strong></h5>
-            <p class="card-text">Manajemen Data Servis Bengkel.</p>
+<div style="background: white; min-height: calc(100vh - 60px); padding: 30px;">
+    <!-- Header Section -->
+    <div class="mb-4" data-aos="fade-down">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #1a2332; margin-bottom: 5px;">
+                    <i class="fas fa-wrench" style="color: #1a2332; margin-right: 10px;"></i>{{ $title }}
+                </h2>
+                <p style="color: #6c757d; margin: 0; font-size: 0.95rem;">Kelola semua data servis bengkel</p>
+            </div>
+            <a href="{{ route('servis.create') }}" class="btn-success-custom" style="text-decoration: none;">
+                <i class="fas fa-plus-circle me-2"></i>Tambah Servis
+            </a>
         </div>
 
-        {{-- Form Pencarian --}}
-        <form action="{{ route('management-servis') }}" method="GET" class="d-flex align-items-center gap-2">
-            <input type="text" name="search" class="form-control shadow-sm"
-                   placeholder="Cari ID Servis..." 
-                   style="width: 250px; border-radius: 10px;"
-                   value="{{ request('search') }}">
-            <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
-                <i class="bi bi-search me-1"></i> Cari
-            </button>
+        <!-- Search Bar -->
+        <form action="{{ route('management-servis') }}" method="GET" class="mb-4">
+            <div class="input-group" style="max-width: 500px;">
+                <input type="text" name="search" class="form-control-modern" 
+                       placeholder="Cari ID Servis..." value="{{ request('search') }}">
+                <button type="submit" class="btn-primary-custom" style="border-radius: 0 10px 10px 0;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </form>
-
-        {{-- Tombol Tambah Servis --}}
-        <a href="{{ route('servis.create') }}" class="btn btn-success" style="border-radius: 10px;">
-            <i class="bi bi-plus-lg me-1"></i> Tambah Servis
-        </a>
     </div>
-</div>
 
-{{-- Notifikasi berhasil dari session --}}
-@if (session()->has('message'))
-    <div class="mt-4 alert alert-{{ session('alertType') ?? 'success' }} alert-dismissible fade show" role="alert">
-        {{ session('message') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Alert Messages -->
+    @if (!empty($message))
+    <div class="alert" style="background: {{ $alertType === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)' }}; color: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideDown 0.3s ease;" data-aos="fade-down">
+        <i class="fas {{ $alertType === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' }} me-2"></i>
+        <span>{{ $message }}</span>
+        <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="alert"></button>
     </div>
-@endif
+    @endif
+
+    @if (session()->has('message'))
+    <div class="alert" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideDown 0.3s ease;" data-aos="fade-down">
+        <i class="fas fa-check-circle me-2"></i>
+        <span>{{ session('message') }}</span>
+        <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
 
 {{-- Tabel Servis --}}
 <div class="row my-4">
@@ -141,6 +131,26 @@
                     </table>
                 </div> {{-- end table-responsive --}}
             </div>
+            <form action="{{ route('servis.destroy', $item->id_servis) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body" style="padding: 20px 30px;">
+                    <p style="color: #6c757d; margin: 0;">
+                        Apakah Anda yakin ingin menghapus data servis <strong style="color: #1a2332;">{{ $item->id_servis }}</strong>?
+                    </p>
+                    <p style="color: #ef4444; margin: 10px 0 0 0; font-size: 0.9rem;">
+                        <i class="fas fa-info-circle me-1"></i>Data yang dihapus tidak dapat dikembalikan!
+                    </p>
+                </div>
+                <div class="modal-footer" style="border: none; padding: 0 30px 30px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; padding: 10px 20px;">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="submit" class="btn-danger-custom" style="padding: 10px 20px;">
+                        <i class="fas fa-trash me-2"></i>Ya, Hapus
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
