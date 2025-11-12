@@ -95,6 +95,7 @@ public function createServis(Request $request)
         'id_motor' => $request->id_motor,
         'id_mechanic' => $request->id_mechanic,
         'id_staff' => $request->id_staff,
+        'status_servis' => 'Sedang Dikerjakan',
     ]);
 
     return redirect()->route('management-servis')
@@ -113,9 +114,18 @@ public function editServisView($id_servis)
     return view('edit-servis', compact('servis','customers','mechanics','staffs','motors_for_customer'));
 }
 
-    public function updateServis(Request $request, $id_servis)
+public function updateServis(Request $request, $id_servis)
 {
     $servis = Servis::findOrFail($id_servis);
+
+    $request->validate([
+        'tanggal_servis' => 'required',
+        'keluhan' => 'required',
+        'id_motor' => 'required|exists:motors,id_motor',
+        'id_mechanic' => 'required|exists:mechanics,id_mechanic',
+        'id_staff' => 'required|exists:staff,id_staff',
+        'status_servis' => 'required|in:Sedang Dikerjakan,Selesai', 
+    ]);
 
     $servis->update([
         'tanggal_servis' => $request->tanggal_servis,
@@ -123,11 +133,24 @@ public function editServisView($id_servis)
         'id_motor' => $request->id_motor,
         'id_mechanic' => $request->id_mechanic,
         'id_staff' => $request->id_staff,
+        'status_servis' => $request->status_servis, 
     ]);
 
     return redirect()->route('management-servis')
         ->with(['message' => 'Data servis berhasil diperbarui!', 'alertType' => 'success']);
 }
+
+public function updateStatus($id_servis)
+{
+    $servis = Servis::findOrFail($id_servis);
+
+    $newStatus = $servis->status_servis === 'Sedang Dikerjakan' ? 'Selesai' : 'Sedang Dikerjakan';
+    $servis->update(['status_servis' => $newStatus]);
+
+    return redirect()->route('management-servis')
+        ->with(['message' => "Status servis diubah menjadi {$newStatus}!", 'alertType' => 'success']);
+}
+
 
    public function deleteServis($id_servis)
 {

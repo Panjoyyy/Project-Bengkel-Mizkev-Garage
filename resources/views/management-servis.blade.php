@@ -62,8 +62,8 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
-                        <thead class="table-dark">
-                            <tr class="text-center">
+                        <thead class="table-dark text-center">
+                            <tr>
                                 <th>No</th>
                                 <th>ID Servis</th>
                                 <th>Tanggal & Waktu</th>
@@ -71,6 +71,7 @@
                                 <th>Mekanik</th>
                                 <th>Staff</th>
                                 <th>Keluhan</th>
+                                <th>Status Servis</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -85,24 +86,55 @@
                                     <td>{{ $item->staff->nama_staff ?? '-' }}</td>
                                     <td>{{ $item->keluhan }}</td>
                                     <td class="text-center">
-                                        {{-- Tombol Edit --}}
-                                        <a href="{{ route('servis.edit', $item->id_servis) }}" class="btn btn-sm btn-primary">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        {{-- Tombol Hapus --}}
-                                        <form action="{{ route('servis.destroy', $item->id_servis) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" 
-                                                    onclick="return confirm('Yakin ingin menghapus data servis ini?')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                        @if($item->status_servis === 'Sedang Dikerjakan')
+                                            <span class="badge bg-warning text-dark">Dikerjakan</span>
+                                        @else
+                                            <span class="badge bg-secondary">Selesai</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-inline-flex align-items-center gap-1">
+
+                                            {{-- Tombol Tandai Selesai --}}
+                                            @if($item->status_servis === 'Sedang Dikerjakan')
+                                                <form action="{{ route('servis.updateStatus', $item->id_servis) }}" 
+                                                      method="POST" 
+                                                      style="display:inline;">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                        Selesai
+                                                    </button>
+                                                </form>
+                                            @endif
+                                           
+            
+                                            {{-- Tombol Edit --}}
+                                            <a href="{{ route('servis.edit', $item->id_servis) }}" 
+                                               class="btn btn-primary btn-sm">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+                                            {{-- Tombol Hapus --}}
+                                            <form action="{{ route('servis.destroy', $item->id_servis) }}" 
+                                                  method="POST" 
+                                                  style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="btn btn-danger btn-sm" 
+                                                        onclick="return confirm('Yakin ingin menghapus data servis ini?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-3">Tidak ada data servis ditemukan.</td>
+                                    <td colspan="9" class="text-center text-muted py-3">
+                                        Tidak ada data servis ditemukan.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -112,4 +144,5 @@
         </div>
     </div>
 </div>
+
 @endsection

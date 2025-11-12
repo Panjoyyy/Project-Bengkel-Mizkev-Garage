@@ -18,7 +18,8 @@ class Servis extends Model
         'id_mechanic',
         'id_staff',
         'keluhan',
-        'tanggal_servis'
+        'tanggal_servis',
+        'status_servis'
     ];
 
      public static function generateServisId()
