@@ -143,37 +143,14 @@
                     <small class="text-muted">Pilih staff yang mencatat</small>
                 </div>
 
-                <!-- Keluhan -->
-                <div class="mb-4">
-                    <label for="keluhan" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                        <i class="fas fa-comment-dots me-2" style="color: #10b981;"></i>Keluhan <span class="text-danger">*</span>
-                    </label>
-                    <textarea name="keluhan" 
-                              id="keluhan" 
-                              rows="4" 
-                              class="form-control @error('keluhan') is-invalid @enderror"
-                              style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                              placeholder="Masukkan keluhan atau masalah pada motor..."
-                              required
-                              minlength="10"
-                              maxlength="500">{{ old('keluhan', $servis->keluhan) }}</textarea>
-                    @error('keluhan')
-                        <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                    @enderror
-                    <small class="text-muted">Minimal 10 karakter, maksimal 500 karakter</small>
-                </div>
-
-                <!-- Buttons -->
-                <div class="d-flex justify-content-between align-items-center pt-3" style="border-top: 2px solid #f3f4f6;">
-                    <a href="{{ route('management-servis') }}" class="btn btn-secondary" style="border-radius: 10px; padding: 12px 30px;">
-                        <i class="fas fa-arrow-left me-2"></i>Kembali
-                    </a>
-                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 10px; padding: 12px 30px; font-weight: 600; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
-                        <i class="fas fa-save me-2"></i>Simpan Perubahan
-                    </button>
-                </div>
-            </form>
-        </div>
+            {{-- Keluhan --}}
+            <div class="mb-3">
+                <label for="keluhan">Keluhan</label>
+                <textarea class="form-control" name="keluhan" rows="3" required>{{ $servis->keluhan }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <a href="{{ route('management-servis') }}" class="btn btn-secondary">Batal</a>
+        </form>
     </div>
 </div>
 
