@@ -1,118 +1,158 @@
-@extends('admin')
+@extends('layouts.admin-modern')
 
 @section('content')
+<div style="background: white; min-height: calc(100vh - 60px); padding: 30px;">
+    <!-- Header Section -->
+    <div class="mb-4" data-aos="fade-down">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #1a2332; margin-bottom: 5px;">
+                    <i class="fas fa-cogs" style="color: #1a2332; margin-right: 10px;"></i>{{ $title }}
+                </h2>
+                <p style="color: #6c757d; margin: 0; font-size: 0.95rem;">Kelola semua layanan bengkel Anda</p>
+            </div>
+            <a href="{{ route('create-service-form') }}" class="btn-success-custom" style="text-decoration: none;">
+                <i class="fas fa-plus-circle me-2"></i>Tambah Layanan
+            </a>
+        </div>
 
-@if (!empty($message))
-    <div class="alert alert-{{ $alertType }} shadow-sm d-flex align-items-center gap-2 mt-3 fade show"
-         style="border-left: 5px solid {{ $alertType === 'success' ? '#1abc9c' : '#f1c40f' }};
-                background-color: {{ $alertType === 'success' ? '#ecfdf5' : '#fffbea' }};
-                color: {{ $alertType === 'success' ? '#065f46' : '#92400e' }};
-                border-radius: 8px; animation: fadeIn 0.4s ease;">
-        <i class="bi {{ $alertType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
-        <span>{{ $message }}</span>
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Search Bar -->
+        <form action="{{ route('management-layanan') }}" method="GET" class="mb-4">
+            <div class="input-group" style="max-width: 500px;">
+                <input type="text" name="search" class="form-control-modern" 
+                       placeholder="Cari layanan..." value="{{ request('search') }}">
+                <button type="submit" class="btn-primary-custom" style="border-radius: 0 10px 10px 0;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
-@endif
+
+    <!-- Alert Messages -->
+    @if (!empty($message))
+    <div class="alert" style="background: {{ $alertType === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)' }}; color: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideDown 0.3s ease;" data-aos="fade-down">
+        <i class="fas {{ $alertType === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' }} me-2"></i>
+        <span>{{ $message }}</span>
+        <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
+
+    @if (session()->has('success'))
+    <div class="alert" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideDown 0.3s ease;" data-aos="fade-down">
+        <i class="fas fa-check-circle me-2"></i>
+        <span>{{ session('success') }}</span>
+        <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
+
+    <!-- Table Section -->
+    <div class="table-responsive" data-aos="fade-up">
+        <table class="table-modern">
+            <thead style="background: linear-gradient(135deg, #1a2332, #2d3748);">
+                <tr>
+                    <th style="width: 60px;">NO</th>
+                    <th style="width: 120px;">ID</th>
+                    <th>Layanan</th>
+                    <th style="width: 150px;">Harga</th>
+                    <th>Deskripsi</th>
+                    <th style="width: 150px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($services as $item)
+                <tr data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 50 }}">
+                    <td style="font-weight: 600; color: #6c757d;">{{ $loop->iteration }}</td>
+                    <td style="font-family: monospace; color: #1a2332; font-weight: 600;">#{{ $item->id_layanan }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ asset('img/layanan/'.$item->foto_layanan) }}" 
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" 
+                                 alt="{{ $item->nama_layanan }}">
+                            <div>
+                                <div style="font-weight: 600; color: #1a2332; font-size: 1rem;">{{ $item->nama_layanan }}</div>
+                                <div style="font-size: 0.85rem; color: #6c757d;">{{ $item->lokasi_layanan ?? 'Mizkev Garage' }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; display: inline-block;">
+                            Rp {{ number_format($item->harga_layanan, 0, ',', '.') }}
+                        </span>
+                    </td>
+                    <td style="color: #6c757d; font-size: 0.9rem; max-width: 250px;">
+                        {{ Str::limit($item->deskripsi_layanan, 60) }}
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="{{ route('edit-service-form', $item->id_layanan) }}" 
+                               class="btn-warning-custom" 
+                               style="padding: 8px 16px; text-decoration: none; font-size: 0.9rem;"
+                               title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn-danger-custom" 
+                                    style="padding: 8px 16px; font-size: 0.9rem;"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#delete{{ $item->id_layanan }}"
+                                    title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 60px 20px;">
+                        <i class="fas fa-inbox" style="font-size: 4rem; color: black; margin-bottom: 20px;"></i>
+                        <p style="color: #6c757d; font-size: 1.1rem; margin: 0;">Tidak ada data layanan</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Modals (Outside Table) -->
+@foreach ($services as $item)
+<div class="modal fade" id="delete{{ $item->id_layanan }}" tabindex="-1" aria-labelledby="deleteLabel{{ $item->id_layanan }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="border: none; padding: 30px 30px 0;">
+                <h5 class="modal-title" id="deleteLabel{{ $item->id_layanan }}" style="color: #1a2332; font-weight: 700;">
+                    <i class="fas fa-exclamation-circle text-danger me-2"></i>Konfirmasi Hapus
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('delete-service', $item->id_layanan) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body" style="padding: 20px 30px;">
+                    <p style="color: #6c757d; margin: 0;">
+                        Apakah Anda yakin ingin menghapus layanan <strong style="color: #1a2332;">{{ $item->nama_layanan }}</strong>?
+                    </p>
+                    <p style="color: #ef4444; margin: 10px 0 0 0; font-size: 0.9rem;">
+                        <i class="fas fa-info-circle me-1"></i>Data yang dihapus tidak dapat dikembalikan!
+                    </p>
+                </div>
+                <div class="modal-footer" style="border: none; padding: 0 30px 30px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; padding: 10px 20px;">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="submit" class="btn-danger-custom" style="padding: 10px 20px;">
+                        <i class="fas fa-trash me-2"></i>Ya, Hapus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
 
 <style>
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 </style>
-
-<div class="row">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-        <div>        
-            <h5 class="card-title"><strong>{{ $title }}</strong></h5>
-            <p class="card-text">Manajemen Data Layanan.</p>
-        </div>
-        <form action="{{ route('management-layanan') }}" method="GET" class="d-flex justify-content-end mb-3" style="gap: 10px;">
-            <input type="text" name="search" class="form-control shadow-sm" 
-            placeholder="Cari layanan..." 
-            style="width: 350px; border-radius: 10px;">
-
-            <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">
-            <i class="bi bi-search me-1"></i> Cari
-            </button>
-        </form>
-            <a href="{{ route('create-service-form') }}" class="btn btn-success">+ Tambah Layanan</a>
-    </div>
-</div>
-
-{{-- Alert sukses --}}
-@if (session()->has('success'))
-<div class="mt-4 alert alert-warning alert-dismissible fade show" role="alert">
-    {{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-@endif
-
-{{-- Tabel Layanan --}}
-<div class="row my-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>NO</th>
-                                <th>ID Layanan</th>
-                                <th>Nama Layanan</th>
-                                <th>Harga</th>
-                                <th>Deskripsi</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($services as $item)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td> {{ $item->id_layanan }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{ asset('img/layanan/'.$item->foto_layanan) }}" width="100" class="me-3" alt="Gambar Layanan">
-                                        {{ $item->nama_layanan }}
-                                    </div>
-                                </td>
-                                <td>Rp {{ number_format($item->harga_layanan, 0, ',', '.') }}</td>
-                                <td>{{ $item->deskripsi_layanan }}</td>
-                                <td>
-
-                                {{-- Tombol Edit --}}
-                                <a href="{{ route('edit-service-form', $item->id_layanan) }}" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-
-                                    {{-- Tombol Hapus --}}
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete{{ $item->id_layanan }}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                    
-                                    <div class="modal fade" id="delete{{ $item->id_layanan }}" tabindex="-1" aria-hidden="true">
-                                        <form action="{{ route('delete-service', $item->id_layanan) }}" method="POST" class="modal-dialog">
-                                            @csrf
-                                            @method('DELETE')
-                                            <div class="modal-content">
-                                                <div class="modal-body">
-                                                    Apakah anda yakin untuk menghapus layanan <strong>{{ $item->nama_layanan }}</strong>?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-danger">Hapus</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
