@@ -120,4 +120,52 @@ class TransaksiController extends Controller
     }
 }
 
+public function show($id)
+{
+    $transaksi = Transaksi::findOrFail($id);
+
+    // Decode JSON
+    $layananIds = json_decode($transaksi->id_layanan, true);
+    $sparepartIds = json_decode($transaksi->id_sparepart, true);
+    $jumlahSparepart = json_decode($transaksi->jumlah_sparepart, true);
+
+    // Relasi data
+    $transaksi->servis = Servis::find($transaksi->id_servis);
+    $transaksi->layanan = Layanan::whereIn('id_layanan', $layananIds ?? [])->get();
+    $transaksi->sparepart = Sparepart::whereIn('id_sparepart', $sparepartIds ?? [])->get();
+    $transaksi->jumlah_sp = $jumlahSparepart;
+
+    return view('show-transaction', compact('transaksi'));
+}
+
+public function destroy($id)
+{
+    $transaksi = Transaksi::findOrFail($id);
+
+    // Kembalikan stok sparepart (jika pernah dipakai)
+    if ($transaksi->id_sparepart && $transaksi->jumlah_sparepart) {
+        $sparepartIds = json_decode($transaksi->id_sparepart, true);
+        $jumlahs = json_decode($transaksi->jumlah_sparepart, true);
+
+        foreach ($sparepartIds as $spId) {
+            $sp = Sparepart::find($spId);
+            if ($sp) {
+                $sp->stok_sparepart += ($jumlahs[$spId] ?? 0);
+                $sp->save();
+            }
+        }
+    }
+
+    // Hapus transaksi
+    $transaksi->delete();
+
+    return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil dihapus!');
+}
+
+public function cetak($id)
+{
+    $transaksi = Transaksi::with('servis')->findOrFail($id);
+    return view('nota-transaction', compact('transaksi'));
+}
+
 }

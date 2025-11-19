@@ -673,7 +673,7 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('transaction') }}" class="sidebar-link {{ request()->is('transaction') ? 'active' : '' }}">
+                <a href="{{ route('transaksi.index') }}" class="sidebar-link {{ request()->is('management-transaction') ? 'active' : '' }}">
                     <i class="fas fa-receipt"></i>
                     <span>Transaksi</span>
                 </a>
