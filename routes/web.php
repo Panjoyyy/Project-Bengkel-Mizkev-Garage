@@ -16,8 +16,13 @@ use App\Http\Controllers\TransaksiController;
     return view('porto');
 });
 
-    // Halaman Utama (Public)
-    Route::get('/', [CustomerController::class, 'showHomeCustomer'])->name('porto');
+    // Halaman Utama (Public) - Redirect ke Staff Login
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
+    
+    // Halaman Porto (Customer View)
+    Route::get('/home', [CustomerController::class, 'showHomeCustomer'])->name('porto');
 
     // Route untuk Tamu (Belum Login)
     Route::middleware('guest')->group(function () {
@@ -28,9 +33,7 @@ use App\Http\Controllers\TransaksiController;
     // Route untuk yang sudah login (Auth)
     Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'showDashboard'])->name('dashboard');
 
     // Route Management Data Customer
     // Halaman index customer (tabel + search)
@@ -88,6 +91,8 @@ use App\Http\Controllers\TransaksiController;
     Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
     Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
     Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
+    Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updateStatus'])->name('servis.updateStatus');
+
     
     // --- ROUTE BARU UNTUK AJAX ---
     // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
@@ -135,10 +140,21 @@ use App\Http\Controllers\TransaksiController;
     // ---------------------
     // Transaction
     // ---------------------
-    Route::get('/management-transaction', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::get('/create-transaction', [TransaksiController::class, 'create'])->name('transaksi.create');
+    // Route transaksi terbaru by panji
+    // Halaman daftar transaksi
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    // Halaman form tambah transaksi
+    Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
+    // Proses simpan transaksi
     Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
-    
+    Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
+
+
+
+
+
     // ---------------------
     // Logout
     // ---------------------
