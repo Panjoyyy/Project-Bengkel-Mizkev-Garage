@@ -32,17 +32,27 @@ class Transaksi extends Model
         return $this->belongsTo(Servis::class, 'id_servis', 'id_servis');
     }
 
+    // Ambil layanan dari JSON
     public function layanan()
     {
-        return $this->belongsToMany(Layanan::class, 'transaction_layanan', 'id_transaksi', 'id_layanan')
-                    ->withTimestamps();
+        $ids = json_decode($this->id_layanan ?? '[]');
+        return Layanan::whereIn('id_layanan', $ids)->get();
     }
 
+    // Ambil sparepart dari JSON dan gabungkan jumlah
     public function sparepart()
     {
-        return $this->belongsToMany(Sparepart::class, 'transaction_sparepart', 'id_transaksi', 'id_sparepart')
-                    ->withTimestamps();
+        $ids = json_decode($this->id_sparepart ?? '[]');
+        $jumlah = json_decode($this->jumlah_sparepart ?? '{}', true);
+        $spareparts = Sparepart::whereIn('id_sparepart', $ids)->get();
+
+        foreach($spareparts as $sp){
+            $sp->jumlah = $jumlah[$sp->id_sparepart] ?? 0;
+        }
+
+        return $spareparts;
     }
+
 
 
      public static function generateTransaksiId()
@@ -55,5 +65,4 @@ class Transaksi extends Model
         $newNumber = $lastNumber + 1;
         return 'TRMKG' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
-
 }

@@ -1,16 +1,15 @@
+<!-- Updated create-transaction.blade.php with Search Servis + QRIS & Transfer Sub-options -->
 @extends('layouts.admin-modern')
 
 @section('content')
 <div style="background: white; min-height: calc(100vh - 60px); padding: 30px;">
-    <!-- Header Section -->
     <div class="mb-4" data-aos="fade-down">
         <h2 style="font-size: 1.8rem; font-weight: 700; color: #1a2332; margin-bottom: 5px;">
-            <i class="fas fa-plus-circle" style="color: #3b82f6; margin-right: 10px;"></i>Tambah Transaksi
+            <i class="fas fa-receipt" style="color: #10b981; margin-right: 10px;"></i>Tambah Transaksi
         </h2>
-        <p style="color: #6c757d; margin: 0; font-size: 0.95rem;">Buat transaksi servis baru</p>
+        <p style="color: #6c757d; margin: 0; font-size: 0.95rem;">Masukkan data transaksi baru</p>
     </div>
 
-    <!-- Alert Messages -->
     @if ($errors->any())
     <div class="alert alert-danger" style="border-radius: 15px; border-left: 4px solid #ef4444;" data-aos="fade-down">
         <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Terdapat kesalahan input:</h6>
@@ -22,191 +21,109 @@
     </div>
     @endif
 
-    <!-- Form Card -->
     <div class="card" style="border: none; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);" data-aos="fade-up">
         <div class="card-body" style="padding: 30px;">
-            <form action="{{ route('transaction.store') }}" method="POST" id="transactionForm">
+            <form method="POST" action="{{ route('transaksi.store') }}" id="transaksiForm">
                 @csrf
-                
-                <div class="row">
-                    <!-- Tanggal & Waktu Servis -->
-                    <div class="col-md-6 mb-4">
-                        <label for="tanggal_servis" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                            <i class="fas fa-calendar-check me-2" style="color: #3b82f6;"></i>Tanggal & Waktu Servis <span class="text-danger">*</span>
-                        </label>
-                        <input type="datetime-local" 
-                               name="tanggal_servis" 
-                               id="tanggal_servis" 
-                               class="form-control @error('tanggal_servis') is-invalid @enderror" 
-                               style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                               value="{{ old('tanggal_servis') }}"
-                               required>
-                        @error('tanggal_servis')
-                            <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                        @enderror
-                    </div>
 
-                    <!-- Customer -->
-                    <div class="col-md-6 mb-4">
-                        <label for="id_customer" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                            <i class="fas fa-user me-2" style="color: #10b981;"></i>Customer <span class="text-danger">*</span>
-                        </label>
-                        
-                        <!-- Debug Info -->
-                        @if($customers->count() == 0)
-                        <div class="alert alert-warning mb-2" style="border-radius: 10px; padding: 10px 15px;">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Belum ada customer!</strong> Silakan tambah customer terlebih dahulu.
-                            <a href="{{ route('create-customer-form') }}" class="btn btn-sm btn-primary ms-2">
-                                <i class="fas fa-plus me-1"></i>Tambah Customer
-                            </a>
-                        </div>
-                        @else
-                        <small class="text-muted mb-2 d-block">
-                            <i class="fas fa-info-circle me-1"></i>{{ $customers->count() }} customer tersedia
-                        </small>
-                        @endif
-                        
-                        <select name="id_customer" 
-                                id="id_customer" 
-                                class="form-select @error('id_customer') is-invalid @enderror" 
-                                style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                                required
-                                onchange="loadMotors()"
-                                {{ $customers->count() == 0 ? 'disabled' : '' }}>
-                            <option value="">{{ $customers->count() == 0 ? 'Belum ada customer' : 'Pilih Customer' }}</option>
-                            @foreach($customers as $customer)
-                                <option value="{{ $customer->id_customer }}" {{ old('id_customer') == $customer->id_customer ? 'selected' : '' }}>
-                                    {{ $customer->nama_customer }} - {{ $customer->no_telp_customer }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_customer')
-                            <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                        @enderror
-                    </div>
+                <!-- Search Servis -->
+                <div class="mb-3">
+                    <label style="font-weight:600; color:#1a2332;">Cari Servis</label>
+                    <input type="text" id="searchServis" class="form-control" placeholder="Ketik ID Servis atau keluhan..." style="border-radius:10px; border:2px solid #e5e7eb; padding:10px;">
                 </div>
 
-                <div class="row">
-                    <!-- Motor (Dynamic) -->
-                    <div class="col-md-6 mb-4">
-                        <label for="id_motor" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                            <i class="fas fa-motorcycle me-2" style="color: #ef4444;"></i>Motor <span class="text-danger">*</span>
-                        </label>
-                        <select name="id_motor" 
-                                id="id_motor" 
-                                class="form-select @error('id_motor') is-invalid @enderror" 
-                                style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                                required
-                                disabled>
-                            <option value="">Pilih customer terlebih dahulu</option>
-                        </select>
-                        @error('id_motor')
-                            <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                        @enderror
-                        <small id="motorHelp" class="text-muted">Pilih customer untuk melihat motor</small>
-                    </div>
-
-                    <!-- Mekanik -->
-                    <div class="col-md-6 mb-4">
-                        <label for="id_mechanic" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                            <i class="fas fa-user-cog me-2" style="color: #3b82f6;"></i>Mekanik <span class="text-danger">*</span>
-                        </label>
-                        
-                        @if($mechanics->count() == 0)
-                        <div class="alert alert-warning mb-2" style="border-radius: 10px; padding: 10px 15px;">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Belum ada mekanik!</strong>
-                            <a href="{{ route('create-mechanic-form') }}" class="btn btn-sm btn-primary ms-2">
-                                <i class="fas fa-plus me-1"></i>Tambah Mekanik
-                            </a>
-                        </div>
-                        @else
-                        <small class="text-muted mb-2 d-block">
-                            <i class="fas fa-info-circle me-1"></i>{{ $mechanics->count() }} mekanik tersedia
-                        </small>
-                        @endif
-                        
-                        <select name="id_mechanic" 
-                                id="id_mechanic" 
-                                class="form-select @error('id_mechanic') is-invalid @enderror" 
-                                style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                                required
-                                {{ $mechanics->count() == 0 ? 'disabled' : '' }}>
-                            <option value="">{{ $mechanics->count() == 0 ? 'Belum ada mekanik' : 'Pilih Mekanik' }}</option>
-                            @foreach($mechanics as $mechanic)
-                                <option value="{{ $mechanic->id_mechanic }}" {{ old('id_mechanic') == $mechanic->id_mechanic ? 'selected' : '' }}>
-                                    {{ $mechanic->mechanic_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_mechanic')
-                            <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Staff -->
+                <!-- Pilih Servis -->
                 <div class="mb-4">
-                    <label for="id_staff" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                        <i class="fas fa-user-tie me-2" style="color: #f59e0b;"></i>Staff <span class="text-danger">*</span>
+                    <label class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
+                        <i class="fas fa-tools me-2" style="color: #3b82f6;"></i>Pilih Servis <span class="text-danger">*</span>
                     </label>
-                    
-                    @if($staffs->count() == 0)
-                    <div class="alert alert-warning mb-2" style="border-radius: 10px; padding: 10px 15px;">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Belum ada staff!</strong> Silakan tambah staff terlebih dahulu di menu Staff.
-                    </div>
-                    @else
-                    <small class="text-muted mb-2 d-block">
-                        <i class="fas fa-info-circle me-1"></i>{{ $staffs->count() }} staff tersedia
-                    </small>
-                    @endif
-                    
-                    <select name="id_staff" 
-                            id="id_staff" 
-                            class="form-select @error('id_staff') is-invalid @enderror" 
-                            style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                            required
-                            {{ $staffs->count() == 0 ? 'disabled' : '' }}>
-                        <option value="">{{ $staffs->count() == 0 ? 'Belum ada staff' : 'Pilih Staff' }}</option>
-                        @foreach($staffs as $staff)
-                            <option value="{{ $staff->id_staff }}" {{ old('id_staff') == $staff->id_staff ? 'selected' : '' }}>
-                                {{ $staff->staff_name }}
-                            </option>
+                    <select name="id_servis" id="selectServis" class="form-select" style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;" required>
+                        <option value="">-- Pilih Servis --</option>
+                        @foreach ($servis as $s)
+                            <option value="{{ $s->id_servis }}">{{ $s->id_servis }}</option>
                         @endforeach
                     </select>
-                    @error('id_staff')
-                        <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                    @enderror
                 </div>
 
-                <!-- Keluhan -->
+                <!-- Layanan -->
                 <div class="mb-4">
-                    <label for="keluhan" class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                        <i class="fas fa-comment-dots me-2" style="color: #10b981;"></i>Keluhan <span class="text-danger">*</span>
+                    <label class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
+                        <i class="fas fa-list-check me-2" style="color: #10b981;"></i>Pilih Layanan <span class="text-danger">*</span>
                     </label>
-                    <textarea name="keluhan" 
-                              id="keluhan" 
-                              rows="4" 
-                              class="form-control @error('keluhan') is-invalid @enderror" 
-                              style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;"
-                              placeholder="Deskripsikan keluhan atau kerusakan motor..."
-                              required
-                              minlength="10"
-                              maxlength="500">{{ old('keluhan') }}</textarea>
-                    @error('keluhan')
-                        <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
-                    @enderror
-                    <small class="text-muted">Minimal 10 karakter, maksimal 500 karakter</small>
+                    <div style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 15px;">
+                        @foreach ($layanan as $l)
+                        <div class="form-check">
+                            <input class="form-check-input layanan-check" type="checkbox" data-harga="{{ $l->harga_layanan }}" name="id_layanan[]" value="{{ $l->id_layanan }}">
+                            <label class="form-check-label">{{ $l->nama_layanan }} (Rp {{ number_format($l->harga_layanan) }})</label>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
 
-                <!-- Buttons -->
+                <!-- Sparepart -->
+                <div class="mb-4">
+                    <label class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
+                        <i class="fas fa-cogs me-2" style="color: #f59e0b;"></i>Pilih Sparepart</label>
+                    <div style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 15px;">
+                        @foreach ($spareparts as $sp)
+                        <div class="row mb-2 align-items-center">
+                            <div class="col-6">
+                                <input class="form-check-input sparepart-check" type="checkbox" data-harga="{{ $sp->harga_sparepart }}" name="id_sparepart[]" value="{{ $sp->id_sparepart }}">
+                                {{ $sp->nama_sparepart }} (Rp {{ number_format($sp->harga_sparepart) }})
+                            </div>
+                            <div class="col-6">
+                                <input type="number" min="0" class="form-control jumlah-sparepart" data-id="{{ $sp->id_sparepart }}" name="jumlah_sparepart[{{ $sp->id_sparepart }}]" placeholder="Jumlah" style="border-radius: 10px; border: 2px solid #e5e7eb;">
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Metode Pembayaran -->
+                <div class="mb-4">
+                    <label class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
+                        <i class="fas fa-money-bill-wave me-2" style="color: #06b6d4;"></i>Metode Pembayaran <span class="text-danger">*</span>
+                    </label>
+                    <select name="metode_pembayaran" id="metode_pembayaran" class="form-select" style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;" required>
+                        <option value="">-- Pilih Metode Pembayaran --</option>
+                        <option value="Cash">Cash</option>
+                        <option value="QRIS">QRIS</option>
+                        <option value="Transfer">Transfer</option>
+                    </select>
+                </div>
+
+                <!-- Sub Option Pembayaran -->
+                <div id="qris_options" class="mb-3" style="display:none;">
+                    <label class="form-label">Pilih QRIS</label>
+                    <select name="qris_jenis" class="form-select" style="border-radius:10px; border:2px solid #e5e7eb; padding:10px;">
+                        <option value="Gopay">Gopay</option>
+                        <option value="Dana">Dana</option>
+                        <option value="OVO">OVO</option>
+                        <option value="ShopeePay">ShopeePay</option>
+                    </select>
+                </div>
+
+                <div id="transfer_options" class="mb-3" style="display:none;">
+                    <label class="form-label">Pilih Bank</label>
+                    <select name="bank_transfer" class="form-select" style="border-radius:10px; border:2px solid #e5e7eb; padding:10px;">
+                        <option value="BCA">BCA</option>
+                        <option value="BRI">BRI</option>
+                        <option value="BNI">BNI</option>
+                        <option value="Mandiri">Mandiri</option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="status_pembayaran" id="status_pembayaran" value="Lunas">
+
+                <div class="mb-4 p-3" style="border-radius: 10px; background: #f3f4f6;">
+                    <h5>Total Harga: <span id="totalHarga" style="font-weight:700; color:#10b981;">Rp 0</span></h5>
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center pt-3" style="border-top: 2px solid #f3f4f6;">
-                    <a href="{{ route('transaction') }}" class="btn btn-secondary" style="border-radius: 10px; padding: 12px 30px;">
+                    <a href="{{ route('transaksi.index') }}" class="btn btn-secondary" style="border-radius: 10px; padding: 12px 30px;">
                         <i class="fas fa-arrow-left me-2"></i>Kembali
                     </a>
-                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 10px; padding: 12px 30px; font-weight: 600; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+                    <button type="submit" class="btn-success-custom" style="padding: 12px 30px;">
                         <i class="fas fa-save me-2"></i>Simpan Transaksi
                     </button>
                 </div>
@@ -216,109 +133,43 @@
 </div>
 
 <script>
-// Load motors based on selected customer
-function loadMotors() {
-    const customerId = document.getElementById('id_customer').value;
-    const motorSelect = document.getElementById('id_motor');
-    const motorHelp = document.getElementById('motorHelp');
-    
-    if (!customerId) {
-        motorSelect.innerHTML = '<option value="">Pilih customer terlebih dahulu</option>';
-        motorSelect.disabled = true;
-        motorHelp.textContent = 'Pilih customer untuk melihat motor';
-        motorHelp.style.color = '#6c757d';
-        return;
-    }
-    
-    motorSelect.disabled = true;
-    motorSelect.innerHTML = '<option value="">Memuat motor...</option>';
-    motorHelp.textContent = '⏳ Memuat data motor...';
-    motorHelp.style.color = '#f59e0b';
-    
-    fetch(`/api/motors/customer/${customerId}`)
-        .then(response => response.json())
-        .then(data => {
-            motorSelect.innerHTML = '';
-            
-            if (data.length === 0) {
-                motorSelect.innerHTML = '<option value="">Customer ini belum memiliki motor</option>';
-                motorHelp.textContent = '⚠️ Customer ini belum memiliki motor terdaftar';
-                motorHelp.style.color = '#ef4444';
-                motorSelect.disabled = true;
-            } else {
-                motorSelect.innerHTML = '<option value="">Pilih Motor</option>';
-                data.forEach(motor => {
-                    const option = document.createElement('option');
-                    option.value = motor.id_motor;
-                    option.textContent = `${motor.merk_motor} - ${motor.no_plat_motor} (${motor.warna_motor})`;
-                    motorSelect.appendChild(option);
-                });
-                motorSelect.disabled = false;
-                motorHelp.textContent = `✓ ${data.length} motor ditemukan`;
-                motorHelp.style.color = '#10b981';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            motorSelect.innerHTML = '<option value="">Gagal memuat motor</option>';
-            motorHelp.textContent = '❌ Gagal memuat data motor';
-            motorHelp.style.color = '#ef4444';
-            motorSelect.disabled = true;
-        });
+// Hitung Total
+function hitungTotal() {
+    let total = 0;
+    document.querySelectorAll('.layanan-check:checked').forEach(chk => {
+        total += parseInt(chk.dataset.harga);
+    });
+    document.querySelectorAll('.sparepart-check:checked').forEach(chk => {
+        const harga = parseInt(chk.dataset.harga);
+        const id = chk.value;
+        const jumlah = document.querySelector(`input[data-id='${id}']`).value || 0;
+        total += harga * jumlah;
+    });
+    document.getElementById('totalHarga').innerText = 'Rp ' + total.toLocaleString();
 }
 
-// Form validation
-document.getElementById('transactionForm').addEventListener('submit', function(e) {
-    const tanggalServis = document.getElementById('tanggal_servis').value;
-    const idCustomer = document.getElementById('id_customer').value;
-    const idMotor = document.getElementById('id_motor').value;
-    const idMechanic = document.getElementById('id_mechanic').value;
-    const idStaff = document.getElementById('id_staff').value;
-    const keluhan = document.getElementById('keluhan').value.trim();
-    
-    if (!tanggalServis) {
-        e.preventDefault();
-        alert('Tanggal & waktu servis harus diisi!');
-        return false;
+document.querySelectorAll('.layanan-check, .sparepart-check, .jumlah-sparepart').forEach(el => {
+    el.addEventListener('input', hitungTotal);
+    el.addEventListener('change', hitungTotal);
+});
+
+// Search Servis
+const searchInput = document.getElementById('searchServis');
+const selectServis = document.getElementById('selectServis');
+searchInput.addEventListener('input', function(){
+    const filter = this.value.toLowerCase();
+    for(const option of selectServis.options){
+        const text = option.text.toLowerCase();
+        option.style.display = text.includes(filter) ? 'block' : 'none';
     }
-    
-    if (!idCustomer) {
-        e.preventDefault();
-        alert('Customer harus dipilih!');
-        return false;
-    }
-    
-    if (!idMotor) {
-        e.preventDefault();
-        alert('Motor harus dipilih!');
-        return false;
-    }
-    
-    if (!idMechanic) {
-        e.preventDefault();
-        alert('Mekanik harus dipilih!');
-        return false;
-    }
-    
-    if (!idStaff) {
-        e.preventDefault();
-        alert('Staff harus dipilih!');
-        return false;
-    }
-    
-    if (keluhan.length < 10) {
-        e.preventDefault();
-        alert('Keluhan minimal 10 karakter!');
-        return false;
-    }
-    
-    if (keluhan.length > 500) {
-        e.preventDefault();
-        alert('Keluhan maksimal 500 karakter!');
-        return false;
-    }
-    
-    return true;
+});
+
+// Sub opsi pembayaran
+const pembayaran = document.getElementById('metode_pembayaran');
+
+pembayaran.addEventListener('change', function(){
+    document.getElementById('qris_options').style.display = this.value === 'QRIS' ? 'block' : 'none';
+    document.getElementById('transfer_options').style.display = this.value === 'Transfer' ? 'block' : 'none';
 });
 </script>
 @endsection

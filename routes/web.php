@@ -9,6 +9,7 @@ use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
+use App\Http\Controllers\TransaksiController;
 
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
@@ -118,6 +119,7 @@ use App\Http\Controllers\ServisController;
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
     Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
+
     // Hapus layanan
     Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
     
@@ -139,12 +141,20 @@ use App\Http\Controllers\ServisController;
     // ---------------------
     // Transaction
     // ---------------------
-    Route::get('/transaction', [AdminController::class, 'showTransaction'])->name('transaction');
-    Route::get('/transaction/create', [AdminController::class, 'createTransactionForm'])->name('transaction.create');
-    Route::post('/transaction/store', [AdminController::class, 'createTransaction'])->name('transaction.store');
-    Route::get('/transaction/edit/{id}', [AdminController::class, 'editTransactionForm'])->name('transaction.edit');
-    Route::put('/transaction/update/{id}', [AdminController::class, 'updateTransaction'])->name('transaction.update');
-    Route::delete('/transaction/delete/{id}', [AdminController::class, 'deleteTransaction'])->name('transaction.delete');
+    // Route transaksi terbaru by panji
+    // Halaman daftar transaksi
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    // Halaman form tambah transaksi
+    Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
+    // Proses simpan transaksi
+    Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
+
+
+
+
 
     // ---------------------
     // Logout

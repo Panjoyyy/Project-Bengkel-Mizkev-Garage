@@ -73,7 +73,7 @@
                     </a>
                     </li>
 
-                    <li class="sidebar-item {{ request()->is('transaction') ? 'sidebar-active' : '' }}">
+                    <li class="sidebar-item {{ request()->is('management-transaction') ? 'sidebar-active' : '' }}">
                         <a href="{{ route('transaction') }}" class="sidebar-link">
                             <i class="bi bi-ui-checks"></i>
                             <span>Transaksi</span>

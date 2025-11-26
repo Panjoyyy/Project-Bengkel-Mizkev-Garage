@@ -46,9 +46,9 @@ class AdminController extends Controller
     {
         $data = [
             'title'     => 'Pesanan & Transaksi',
-            'Servis'    =>  Transaksi::with(['servis', 'mechanic'])->get()
+            'Servis'    =>  Transaksi::with(['servis'])->get()
         ];
 
-        return view('management-servis', $data);
+        return view('management-transaction', $data);
     }
 }
