@@ -663,16 +663,16 @@
                     <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=800" class="d-block w-100 carousel-image" alt="Motor 1">
+                                <img src="{{ asset('img/Screenshot 2025-11-19 124105.png') }}" class="d-block w-100 carousel-image" alt="Motor 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=800" class="d-block w-100 carousel-image" alt="Motor 2">
+                                <img src="{{ asset('img/Screenshot 2025-11-19 130110.png') }}" class="d-block w-100 carousel-image" alt="Motor 2">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?q=80&w=800" class="d-block w-100 carousel-image" alt="Motor 3">
+                                <img src="{{ asset('img/Screenshot 2025-11-19 125417.png') }}" class="d-block w-100 carousel-image" alt="Motor 3">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?q=80&w=800" class="d-block w-100 carousel-image" alt="Motor 4">
+                                <img src="{{ asset('img/Screenshot 2025-11-19 130217.png') }}" class="d-block w-100 carousel-image" alt="Motor 4">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
