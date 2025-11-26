@@ -151,7 +151,7 @@
                     @error('keluhan')
                         <div class="invalid-feedback"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                     @enderror
-                    <small class="text-muted">Minimal 10 karakter, maksimal 500 karakter</small>
+                    <small class="text-muted">Keluhan minimal 5 karakter!</small>
                 </div>
 
                 <!-- Buttons -->
@@ -247,9 +247,9 @@ document.getElementById('servisForm').addEventListener('submit', function(e) {
     }
     
     // Validate keluhan
-    if (keluhan.length < 10) {
+    if (keluhan.length < 5) {
         e.preventDefault();
-        alert('Keluhan minimal 10 karakter!');
+        alert('Keluhan minimal 5 karakter!');
         return false;
     }
     

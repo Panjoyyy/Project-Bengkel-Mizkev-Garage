@@ -119,6 +119,7 @@ use App\Http\Controllers\TransaksiController;
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
     Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
+
     // Hapus layanan
     Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
     
