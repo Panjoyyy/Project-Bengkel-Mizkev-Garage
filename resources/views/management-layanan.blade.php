@@ -47,14 +47,14 @@
 
     <!-- Table Section -->
     <div class="table-responsive" data-aos="fade-up">
-        <table class="table-modern">
+        <table class="table-modern w-100" style="width:100%;">
             <thead style="background: linear-gradient(135deg, #1a2332, #2d3748);">
                 <tr>
                     <th style="width: 60px;">NO</th>
                     <th style="width: 120px;">ID</th>
                     <th>Layanan</th>
-                    <th style="width: 150px;">Harga</th>
-                    <th>Deskripsi</th>
+                    <th style="min-width: 150px;">Harga</th>
+                    <th style="min-width: 250px;">Deskripsi</th>
                     <th style="width: 150px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
