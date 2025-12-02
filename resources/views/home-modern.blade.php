@@ -655,9 +655,10 @@
                     <p class="hero-subtitle">
                         Mekanik profesional kami siap melayani servis, tune-up, dan perbaikan motor dengan cepat dan hasil memuaskan. Kepercayaan Anda adalah prioritas kami.
                     </p>
-                    <a href="#layanan" class="btn btn-primary-custom">
-                        <i class="fas fa-calendar-check"></i> Booking Servis Sekarang
-                    </a>
+                <a href="https://wa.me/6281229527335?text=Halo%20Saya%20ingin%20booking%20servis.%0A%0ANama:%20%0ATipe%20Motor:%20%0AKeluhan:%20"
+                    class="btn btn-primary-custom" target="_blank">
+                    <i class="fas fa-calendar-check"></i> Booking Servis Sekarang
+                </a>
                 </div>
                 <div class="col-lg-5" data-aos="fade-left">
                     <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
@@ -797,7 +798,7 @@
                     @foreach ($services as $index => $item)
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                         <div class="service-card">
-                            <img src="{{ asset('img/layanan/'.$item->foto_layanan) }}" alt="{{ $item->nama_layanan }}" class="service-image">
+                            <img src="{{ asset('img/layanan/' . $item->foto_layanan) }}" alt="{{ $item->nama_layanan }}" class="service-image">
                             <div class="service-body">
                                 <h3 class="service-title">{{ $item->nama_layanan }}</h3>
                                 <div class="service-location">
@@ -830,14 +831,26 @@
                     <h2 class="display-5 fw-bold mb-4">Hubungi Kami</h2>
                     <p class="lead mb-4">Siap melayani kebutuhan servis motor Anda. Hubungi kami sekarang!</p>
                     <div class="mb-3">
-                        <i class="fas fa-phone me-2"></i> <strong>Telepon:</strong> +62 812-3456-7890
+                        <i class="fas fa-phone me-2"></i>
+                        <strong>Telepon:</strong>
+                        <a href="https://wa.me/6281229527335" target="_blank" rel="noopener">
+                            +6281229527335
+                        </a>
                     </div>
                     <div class="mb-3">
-                        <i class="fas fa-envelope me-2"></i> <strong>Email:</strong> info@mizkevgarage.com
+                        <i class="fas fa-envelope me-2"></i>
+                        <strong>Email:</strong>
+                        <a href="mailto:info@mizkevgarage.com">info@mizkevgarage.com</a>
                     </div>
+    
                     <div class="mb-3">
-                        <i class="fas fa-map-marker-alt me-2"></i> <strong>Alamat:</strong> Jl. Raya Motor No. 123, Jakarta
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <strong>Alamat:</strong>
+                        <a href="https://maps.app.goo.gl/QjsusxGtmEhxWmmY7" target="_blank">
+                            Mizkev Garage
+                        </a>
                     </div>
+    
                 </div>
                 <div class="col-lg-6" data-aos="fade-left">
                     <div id="teamCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
@@ -887,14 +900,37 @@
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <h4 class="footer-title">Mizkev Garage</h4>
-                    <p>Solusi terbaik untuk perawatan dan perbaikan motor Anda. Kepercayaan dan kepuasan pelanggan adalah prioritas kami.</p>
-                    <div class="social-icons mt-3">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
+                    <p>Solusi terbaik untuk perawatan dan perbaikan motor Anda. Kepercayaan dan kepuasan pelanggan adalah
+                        prioritas kami.</p>
+                    <style>
+                        .social-icons a {
+                            color: white;
+                            font-size: 24px;
+                            margin-right: 15px;
+                            text-decoration: none !important;
+                        }
+    
+                        .social-icons a:hover {
+                            color: #ccc;
+                        }
+                    </style>
+    <div class="social-icons mt-3">
+        <a href="https://instagram.com/28performance_" target="_blank">
+            <i class="fab fa-instagram"></i>
+        </a>
+    
+        <a href="https://wa.me/6281229527335" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://www.tiktok.com/@enggabalapbalap" target="_blank">
+            <i class="fab fa-tiktok"></i>
+        </a>
+        <a href="https://www.youtube.com/@mizkevgarage176" target="_blank">
+            <i class="fab fa-youtube"></i>
+        </a>
+    </div>
+    
+    </div>
                 <div class="col-lg-4 mb-4">
                     <h4 class="footer-title">Link Cepat</h4>
                     <a href="#beranda" class="footer-link">Beranda</a>
