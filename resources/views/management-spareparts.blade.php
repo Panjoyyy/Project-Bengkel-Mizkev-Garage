@@ -47,7 +47,7 @@
 
     <!-- Table Section -->
     <div class="table-responsive" data-aos="fade-up">
-        <table class="table-modern">
+        <table class="table-modern w-100" style="width:100%;">
             <thead style="background: linear-gradient(135deg, #1a2332, #2d3748);">
                 <tr>
                     <th style="width: 60px;">NO</th>
