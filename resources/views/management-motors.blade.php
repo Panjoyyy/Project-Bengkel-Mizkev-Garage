@@ -47,17 +47,15 @@
 
     <!-- Table Section -->
     <div class="table-responsive" data-aos="fade-up">
-        <table class="table-modern">
+        <table class="table-modern w-100" style="width:100%;">
             <thead style="background: linear-gradient(135deg, #1a2332, #2d3748);">
                 <tr>
                     <th style="width: 60px;">NO</th>
-                    <th style="width: 100px;">ID</th>
-                    <th style="width: 130px;">No Plat</th>
+                    <th style="width: 120px;">ID</th>
+                    <th style="min-width: 130px;">No Plat</th>
                     <th>Merk Motor</th>
                     <th style="width: 120px;">Warna</th>
                     <th style="width: 100px;">Tahun</th>
-                    <th style="width: 100px;">ID Cust</th>
-                    <th>Nama Customer</th>
                     <th style="width: 150px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
@@ -78,8 +76,6 @@
                         </span>
                     </td>
                     <td style="color: #6c757d; font-weight: 500;">{{ $motor->tahun_motor }}</td>
-                    <td style="font-family: monospace; color: #6c757d; font-size: 0.85rem;">#{{ $motor->id_customer }}</td>
-                    <td style="color: #1a2332; font-weight: 500;">{{ $motor->customer->nama_customer ?? '-' }}</td>
                     <td style="text-align: center;">
                         <div class="d-flex gap-2 justify-content-center">
                             <a href="{{ route('motor.edit', $motor->id_motor) }}" 
@@ -100,7 +96,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" style="text-align: center; padding: 60px 20px;">
+                    <td colspan="7" style="text-align: center; padding: 60px 20px;">
                         <i class="fas fa-motorcycle" style="font-size: 4rem; color: #1a2332; margin-bottom: 20px;"></i>
                         <p style="color: #6c757d; font-size: 1.1rem; margin: 0;">Tidak ada data motor</p>
                     </td>

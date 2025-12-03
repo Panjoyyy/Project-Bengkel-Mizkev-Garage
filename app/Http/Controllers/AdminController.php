@@ -20,8 +20,8 @@ class AdminController extends Controller
     {
         // gather collections and totals for the dashboard view
         $customers = Customer::all();
-        $motors = Motor::all();
-        $servis = Servis::all();
+        $motors = Motor::with('customer')->get();
+        $servis = Servis::with(['motor.customer', 'mechanic'])->get();
         $mechanics = Mechanic::all();
 
         $data = [
