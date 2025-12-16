@@ -30,6 +30,15 @@
         </form>
     </div>
 
+    @if (!empty($message))
+<div class="alert" style="background: {{ $alertType === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)' }}; color: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 20px;" data-aos="fade-down">
+    <i class="fas {{ $alertType === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' }} me-2"></i>
+    <span>{{ $message }}</span>
+    <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="alert"></button>
+</div>
+@endif
+
+
     <!-- Alert -->
     @if(session('success'))
     <div class="alert" style="background: linear-gradient(135deg,#10b981,#059669); color:white; border-radius:15px; padding:15px 20px;" data-aos="fade-down">
@@ -57,7 +66,7 @@
                     <th>Sparepart</th>
                     <th>Subtotal</th>
                     <th>Pembayaran</th>
-                    <th style="width: 150px; text-align:center;">Aksi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
            <tbody>

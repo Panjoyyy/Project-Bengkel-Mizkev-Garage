@@ -53,4 +53,10 @@ class Servis extends Model
     {
         return $this->belongsTo(Staff::class, 'id_staff', 'id_staff');
     }
+    // Relasi ke transaksi
+    public function transaksi()
+{
+    return $this->hasOne(Transaksi::class, 'id_servis', 'id_servis');
+}
+
 }

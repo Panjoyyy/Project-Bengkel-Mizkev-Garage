@@ -12,36 +12,80 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
-    // Halaman daftar transaksi
-    public function index()
-    {
-        $transaksi = Transaksi::latest()->get();
+   public function index(Request $request)
+{
+    $search = $request->search;
+    $message = null;
+    $alertType = 'success';
 
-        // Loop tiap transaksi untuk decode JSON-nya
-        foreach ($transaksi as $t) {
-        $layananIds = json_decode($t->id_layanan, true);
-        $sparepartIds = json_decode($t->id_sparepart, true);
+    $query = Transaksi::query();
 
-        // Ambil nama layanan dan sparepart berdasarkan ID
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('id_transaksi', 'like', "%{$search}%")
+              ->orWhere('no_nota', 'like', "%{$search}%")
+              ->orWhere('id_servis', 'like', "%{$search}%");
+        });
+    }
+
+    $transaksi = $query->orderBy('tanggal_transaksi', 'desc')->get();
+
+    // ===== PESAN SEARCH =====
+    if ($search) {
+        if ($transaksi->count() > 0) {
+            $message = "Menampilkan hasil pencarian transaksi untuk kata kunci: \"$search\"";
+            $alertType = 'success';
+        } else {
+            $message = "Data transaksi dengan kata kunci \"$search\" tidak ditemukan";
+            $alertType = 'warning';
+        }
+    }
+
+    // ===== LOAD RELASI =====
+    foreach ($transaksi as $t) {
         $t->servis = Servis::find($t->id_servis);
+
+        $layananIds = json_decode($t->id_layanan, true);
         $t->layanan = Layanan::whereIn('id_layanan', $layananIds ?? [])->get();
+
+        $sparepartIds = json_decode($t->id_sparepart, true);
         $t->sparepart = Sparepart::whereIn('id_sparepart', $sparepartIds ?? [])->get();
     }
 
-    return view('management-transaction', compact('transaksi'));
-    }
+    return view('management-transaction', [
+        'transaksi' => $transaksi,
+        'title' => 'Manajemen Transaksi',
+        'message' => $message,
+        'alertType' => $alertType
+    ]);
+}
 
     // Halaman tambah transaksi
     public function create()
-    {
-        $servis = Servis::all();
-        $layanan = Layanan::all();
-        $spareparts = Sparepart::all();
-        return view('create-transaction', compact('servis', 'layanan', 'spareparts'));
-    }
+{
+    $servis = Servis::where('status_servis', 'selesai')
+        ->whereDoesntHave('transaksi')
+        ->get();
+
+    $layanan = Layanan::all();
+    $spareparts = Sparepart::all();
+
+    return view('create-transaction', compact('servis', 'layanan', 'spareparts'));
+}
+
+
 
   public function store(Request $request)
 {
+    $cekTransaksi = Transaksi::where('id_servis', $request->id_servis)->first();
+
+if ($cekTransaksi) {
+    DB::rollBack();
+    return back()
+        ->with('error', 'Servis ini sudah memiliki transaksi!')
+        ->withInput();
+}
+
     $request->validate([
         'id_servis' => 'required',
         'id_layanan' => 'required|array',
@@ -50,26 +94,50 @@ class TransaksiController extends Controller
 
     DB::beginTransaction();
     try {
-        // === Generate ID Transaksi ===
-        $idTransaksi = Transaksi::generateTransaksiId();
+        // ======================================================
+        // VALIDASI STATUS SERVIS (WAJIB SELESAI)
+        // ======================================================
+        $servis = Servis::where('id_servis', $request->id_servis)
+            ->where('status_servis', 'selesai')
+            ->first();
 
-        // (Opsional) Generate nomor nota unik
+        if (!$servis) {
+            DB::rollBack();
+            return back()
+                ->with('error', 'Servis belum selesai, transaksi tidak dapat diproses.')
+                ->withInput();
+        }
+
+        // ======================================================
+        // Generate ID Transaksi & Nota
+        // ======================================================
+        $idTransaksi = Transaksi::generateTransaksiId();
         $noNota = 'NT' . strtoupper(uniqid());
 
-        // === Hitung total harga layanan ===
-        $totalHargaLayanan = Layanan::whereIn('id_layanan', $request->id_layanan)->sum('harga_layanan');
+        // ======================================================
+        // Hitung Total Harga Layanan
+        // ======================================================
+        $totalHargaLayanan = Layanan::whereIn('id_layanan', $request->id_layanan)
+            ->sum('harga_layanan');
 
-        // === Hitung total harga sparepart ===
+        // ======================================================
+        // Hitung Total Harga Sparepart + Kurangi Stok
+        // ======================================================
         $totalHargaSparepart = 0;
+
         if ($request->has('id_sparepart')) {
             foreach ($request->id_sparepart as $id_sparepart) {
                 $jumlah = $request->jumlah_sparepart[$id_sparepart] ?? 0;
                 $sp = Sparepart::find($id_sparepart);
 
-                if ($sp) {
-                    // Cek stok
+                if ($sp && $jumlah > 0) {
+
+                    // Validasi stok
                     if ($sp->stok_sparepart < $jumlah) {
-                        return back()->with('error', "Stok sparepart {$sp->nama_sparepart} tidak mencukupi!");
+                        DB::rollBack();
+                        return back()
+                            ->with('error', "Stok sparepart {$sp->nama_sparepart} tidak mencukupi!")
+                            ->withInput();
                     }
 
                     // Kurangi stok
@@ -81,31 +149,37 @@ class TransaksiController extends Controller
             }
         }
 
-        // === Hitung subtotal ===
+        // ======================================================
+        // Hitung Subtotal
+        // ======================================================
         $subtotal = $totalHargaLayanan + $totalHargaSparepart;
 
-        // === Validasi uang tunai jika metode pembayaran Tunai ===
+        // ======================================================
+        // Validasi Pembayaran Tunai
+        // ======================================================
         if ($request->metode_pembayaran === 'Tunai') {
             $uang_dibayar = $request->uang_dibayar ?? 0;
+
             if ($uang_dibayar < $subtotal) {
-                return back()->with('error', 'Uang tunai tidak mencukupi untuk membayar subtotal transaksi!');
+                DB::rollBack();
+                return back()
+                    ->with('error', 'Uang tunai tidak mencukupi untuk membayar transaksi!')
+                    ->withInput();
             }
         }
 
-        // === Simpan data jumlah sparepart dalam JSON ===
-        $jumlahSparepart = $request->input('jumlah_sparepart', []);
-        $jumlahSparepartJson = json_encode($jumlahSparepart);
-
-        // === Simpan Transaksi ke Database ===
+        // ======================================================
+        // Simpan Transaksi
+        // ======================================================
         Transaksi::create([
             'id_transaksi' => $idTransaksi,
             'no_nota' => $noNota,
             'id_servis' => $request->id_servis,
             'id_layanan' => json_encode($request->id_layanan),
             'id_sparepart' => json_encode($request->id_sparepart),
+            'jumlah_sparepart' => json_encode($request->jumlah_sparepart ?? []),
             'harga_layanan' => $totalHargaLayanan,
             'harga_sparepart' => $totalHargaSparepart,
-            'jumlah_sparepart' => $jumlahSparepartJson,
             'tanggal_transaksi' => now(),
             'subtotal' => $subtotal,
             'metode_pembayaran' => $request->metode_pembayaran,
@@ -113,13 +187,14 @@ class TransaksiController extends Controller
         ]);
 
         DB::commit();
-        return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil ditambahkan!');
+        return redirect()->route('transaksi.index')
+            ->with('success', 'Transaksi berhasil ditambahkan!');
     } catch (\Exception $e) {
         DB::rollBack();
-        return back()->with('error', 'Gagal menyimpan transaksi: ' . $e->getMessage());
+        return back()
+            ->with('error', 'Gagal menyimpan transaksi: ' . $e->getMessage());
     }
 }
-
 public function show($id)
 {
     $transaksi = Transaksi::findOrFail($id);
