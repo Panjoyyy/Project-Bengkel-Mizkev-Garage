@@ -9,10 +9,10 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1e3c72;
-            --secondary-color: #2a5298;
-            --accent-color: #3b82f6;
-            --accent-secondary: #2563eb;
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d2d2d;
+            --accent-color: #00a152;
+            --accent-secondary: #00875a;
             --sidebar-width: 280px;
             --sidebar-collapsed: 80px;
             --text-dark: #2c3e50;
@@ -20,7 +20,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --info: #3b82f6;
+            --info: #00a152;
         }
 
         * {
@@ -111,7 +111,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
             animation: float-logo 3s ease-in-out infinite;
         }
 
@@ -198,7 +198,7 @@
         .sidebar-link.active {
             background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
         }
 
         .sidebar-link i {
@@ -448,20 +448,20 @@
 
         /* Buttons */
         .btn-primary-custom {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, #00a152, #00875a);
             border: none;
             padding: 12px 30px;
             border-radius: 12px;
             color: white;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
         }
 
         .btn-primary-custom:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.5);
+            background: linear-gradient(135deg, #00875a, #006b47);
         }
 
         .btn-success-custom {
@@ -573,7 +573,7 @@
 
         .form-control-modern:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.1);
             background: white;
         }
 
@@ -699,7 +699,7 @@
                         <li>
                             <div class="dropdown-item-text" style="padding: 8px 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 4px;">
                                 <div class="d-flex align-items-center gap-2">
-                                    <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #3b82f6;"></i>
+                                    <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #00a152;"></i>
                                     <div>
                                         <strong style="display: block; color: #1a2332; font-size: 0.85rem;">{{ auth()->user()->username }}</strong>
                                         <small class="text-muted" style="font-size: 0.7rem;">Administrator</small>
