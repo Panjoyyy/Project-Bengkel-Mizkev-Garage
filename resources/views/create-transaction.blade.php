@@ -60,24 +60,42 @@
                     </div>
                 </div>
 
-                <!-- Sparepart -->
-                <div class="mb-4">
-                    <label class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
-                        <i class="fas fa-cogs me-2" style="color: #f59e0b;"></i>Pilih Sparepart</label>
-                    <div style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 15px;">
-                        @foreach ($spareparts as $sp)
-                        <div class="row mb-2 align-items-center">
-                            <div class="col-6">
-                                <input class="form-check-input sparepart-check" type="checkbox" data-harga="{{ $sp->harga_sparepart }}" name="id_sparepart[]" value="{{ $sp->id_sparepart }}">
-                                {{ $sp->nama_sparepart }} (Rp {{ number_format($sp->harga_sparepart) }})
-                            </div>
-                            <div class="col-6">
-                                <input type="number" min="0" class="form-control jumlah-sparepart" data-id="{{ $sp->id_sparepart }}" name="jumlah_sparepart[{{ $sp->id_sparepart }}]" placeholder="Jumlah" style="border-radius: 10px; border: 2px solid #e5e7eb;">
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
+             <!-- Sparepart -->
+<div class="mb-4">
+    <label class="form-label" style="font-weight: 600; color: #1a2332; margin-bottom: 8px;">
+        <i class="fas fa-cogs me-2" style="color: #f59e0b;"></i>Pilih Sparepart
+    </label>
+
+    <div style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 15px;">
+        @foreach ($spareparts as $sp)
+        <div class="row mb-2 align-items-center">
+            <div class="col-6">
+                <input 
+                    class="form-check-input sparepart-check" 
+                    type="checkbox"
+                    data-id="{{ $sp->id_sparepart }}"
+                    data-harga="{{ $sp->harga_sparepart }}"
+                    name="id_sparepart[]" 
+                    value="{{ $sp->id_sparepart }}"
+                >
+                {{ $sp->nama_sparepart }} (Rp {{ number_format($sp->harga_sparepart) }})
+            </div>
+            <div class="col-6">
+                <input 
+                    type="number" 
+                    min="1"
+                    disabled
+                    class="form-control jumlah-sparepart"
+                    data-id="{{ $sp->id_sparepart }}"
+                    name="jumlah_sparepart[{{ $sp->id_sparepart }}]"
+                    placeholder="Jumlah"
+                    style="border-radius: 10px; border: 2px solid #e5e7eb;"
+                >
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
 
                 <!-- Metode Pembayaran -->
                 <div class="mb-4">
@@ -133,25 +151,28 @@
 </div>
 
 <script>
-// Hitung Total
 function hitungTotal() {
     let total = 0;
+
+    // Total layanan
     document.querySelectorAll('.layanan-check:checked').forEach(chk => {
-        total += parseInt(chk.dataset.harga);
+        total += parseInt(chk.dataset.harga) || 0;
     });
+
+    // Total sparepart
     document.querySelectorAll('.sparepart-check:checked').forEach(chk => {
-        const harga = parseInt(chk.dataset.harga);
-        const id = chk.value;
-        const jumlah = document.querySelector(`input[data-id='${id}']`).value || 0;
+        const harga = parseInt(chk.dataset.harga) || 0;
+        const id = chk.dataset.id;
+
+        const jumlahInput = document.querySelector(`.jumlah-sparepart[data-id='${id}']`);
+        const jumlah = parseInt(jumlahInput.value) || 0;
+
         total += harga * jumlah;
     });
-    document.getElementById('totalHarga').innerText = 'Rp ' + total.toLocaleString();
-}
 
-document.querySelectorAll('.layanan-check, .sparepart-check, .jumlah-sparepart').forEach(el => {
-    el.addEventListener('input', hitungTotal);
-    el.addEventListener('change', hitungTotal);
-});
+    document.getElementById('totalHarga').innerText =
+        'Rp ' + total.toLocaleString('id-ID');
+}
 
 // Search Servis
 const searchInput = document.getElementById('searchServis');
@@ -163,7 +184,23 @@ searchInput.addEventListener('input', function(){
         option.style.display = text.includes(filter) ? 'block' : 'none';
     }
 });
+document.querySelectorAll('.sparepart-check').forEach(chk => {
+    chk.addEventListener('change', function () {
+        const id = this.dataset.id;
+        const jumlahInput = document.querySelector(`.jumlah-sparepart[data-id='${id}']`);
 
+        if (this.checked) {
+            jumlahInput.disabled = false;
+            jumlahInput.value = 1;
+            jumlahInput.focus();
+        } else {
+            jumlahInput.disabled = true;
+            jumlahInput.value = '';
+        }
+
+        hitungTotal();
+    });
+});
 // Sub opsi pembayaran
 const pembayaran = document.getElementById('metode_pembayaran');
 
@@ -171,5 +208,7 @@ pembayaran.addEventListener('change', function(){
     document.getElementById('qris_options').style.display = this.value === 'QRIS' ? 'block' : 'none';
     document.getElementById('transfer_options').style.display = this.value === 'Transfer' ? 'block' : 'none';
 });
+
+
 </script>
 @endsection
