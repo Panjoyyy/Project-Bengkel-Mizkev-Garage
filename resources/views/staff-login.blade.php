@@ -17,7 +17,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(0, 200, 83, 0.85) 100%);
         }
 
         .login-container {
@@ -28,7 +28,7 @@
 
         .left-panel {
             flex: 1;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -130,7 +130,7 @@
             right: 20px;
             width: 40px;
             height: 40px;
-            background: #667eea;
+            background: #00a152;
             color: white;
             border: none;
             border-radius: 5px;
@@ -143,7 +143,7 @@
         }
 
         .close-btn:hover {
-            background: #764ba2;
+            background: #00875a;
             transform: rotate(90deg);
         }
 
@@ -184,9 +184,9 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00a152;
             background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.1);
         }
 
         .form-group input.is-invalid {
@@ -202,7 +202,7 @@
         .login-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00a152 0%, #00875a 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -210,12 +210,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
         }
 
         .login-btn:active {

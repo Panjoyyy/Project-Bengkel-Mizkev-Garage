@@ -15,9 +15,9 @@
         }
 
         :root {
-            --primary-color: #1e3c72;
-            --secondary-color: #2a5298;
-            --accent-color: #667eea;
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d2d2d;
+            --accent-color: #00a152;
             --text-dark: #2c3e50;
             --text-light: #ecf0f1;
         }
@@ -108,7 +108,7 @@
         .hero-section {
             margin-top: 76px;
             min-height: 90vh;
-            background: linear-gradient(135deg, rgba(30, 60, 114, 0.95) 0%, rgba(42, 82, 152, 0.95) 100%), 
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(0, 200, 83, 0.85) 100%), 
                         url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2000') center/cover;
             display: flex;
             align-items: center;
@@ -121,7 +121,7 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(0, 230, 118, 0.1);
             border-radius: 50%;
             top: -200px;
             right: -200px;
@@ -133,7 +133,7 @@
             position: absolute;
             width: 300px;
             height: 300px;
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(255, 152, 0, 0.1);
             border-radius: 50%;
             bottom: -100px;
             left: -100px;
@@ -167,7 +167,7 @@
         }
 
         .btn-primary-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00a152 0%, #00875a 100%);
             color: white;
             padding: 15px 40px;
             border-radius: 50px;
@@ -175,12 +175,12 @@
             font-weight: 600;
             border: none;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(0, 230, 118, 0.4);
         }
 
         .btn-primary-custom:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 30px rgba(0, 230, 118, 0.6);
         }
 
         /* Features Section */
@@ -196,7 +196,7 @@
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             top: -100px;
             right: -100px;
@@ -208,7 +208,7 @@
             position: absolute;
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(118, 75, 162, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 200, 83, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             bottom: -100px;
             left: -100px;
@@ -278,7 +278,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 230, 118, 0.1), transparent);
             transition: left 0.5s;
         }
 
@@ -293,7 +293,7 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.05) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.5s;
         }
@@ -305,7 +305,7 @@
         .feature-card:hover {
             transform: translateY(-15px) rotateX(5deg) scale(1.02);
             box-shadow: 
-                0 25px 50px rgba(102, 126, 234, 0.3),
+                0 25px 50px rgba(0, 230, 118, 0.3),
                 0 10px 20px rgba(0, 0, 0, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
             background: linear-gradient(145deg, #ffffff, #f8f9ff);
@@ -315,7 +315,7 @@
         .feature-icon {
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00a152 0%, #00875a 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -325,7 +325,7 @@
             color: white;
             position: relative;
             box-shadow: 
-                0 10px 30px rgba(102, 126, 234, 0.4),
+                0 10px 30px rgba(0, 230, 118, 0.4),
                 inset 0 -5px 10px rgba(0, 0, 0, 0.2),
                 inset 0 5px 10px rgba(255, 255, 255, 0.3);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -350,7 +350,7 @@
         .feature-card:hover .feature-icon {
             transform: scale(1.15) rotateY(360deg);
             box-shadow: 
-                0 15px 40px rgba(102, 126, 234, 0.6),
+                0 15px 40px rgba(0, 230, 118, 0.6),
                 inset 0 -5px 10px rgba(0, 0, 0, 0.3),
                 inset 0 5px 10px rgba(255, 255, 255, 0.4);
         }
@@ -378,7 +378,7 @@
             width: 120%;
             height: 120%;
             border-radius: 50%;
-            border: 2px solid rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(0, 230, 118, 0.3);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -410,7 +410,7 @@
         .feature-card:hover .feature-title {
             color: var(--accent-color);
             transform: scale(1.05);
-            text-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+            text-shadow: 0 4px 8px rgba(0, 230, 118, 0.2);
         }
 
         .feature-description {
@@ -509,7 +509,7 @@
 
         /* Footer */
         .footer {
-            background: #2c3e50;
+            background: linear-gradient(135deg, #1e3b2aff 0%, #208355ff 100%);
             color: white;
             padding: 40px 0 20px;
         }
@@ -564,14 +564,14 @@
 
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
-            background-color: rgba(102, 126, 234, 0.8);
+            background-color: rgba(0, 230, 118, 0.8);
             border-radius: 50%;
             padding: 20px;
         }
 
         .carousel-control-prev-icon:hover,
         .carousel-control-next-icon:hover {
-            background-color: rgba(102, 126, 234, 1);
+            background-color: rgba(0, 230, 118, 1);
         }
 
         .carousel-caption-custom {
@@ -579,7 +579,7 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(30, 60, 114, 0.9);
+            background: rgba(26, 26, 26, 0.9);
             padding: 10px 30px;
             border-radius: 25px;
             backdrop-filter: blur(10px);
