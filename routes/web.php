@@ -75,23 +75,34 @@ use App\Http\Controllers\TransaksiController;
     Route::delete('/delete-sparepart/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
 
 
-   // Route Management Data Servis
-    // Halaman manajemen servis
-    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])->name('management-servis');
-    // Halaman tambah servis
-    Route::get('/servis/create', [ServisController::class, 'createServisView'])->name('servis.create');
-    // CRUD Servis
-    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('servis.getMotors');
-    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
-    Route::get('/servis/edit/{id_servis}', [ServisController::class, 'editServisView'])->name('servis.edit');
-    Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
-    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
-    // Route Management Data Servis
-    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])->name('management-servis');
-    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
-    Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
-    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
-    Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updateStatus'])->name('servis.updateStatus');
+   // =======================
+// Management Data Servis
+// =======================
+
+Route::get('/management-servis', [ServisController::class, 'showManagementServis'])
+    ->name('management-servis');
+
+Route::get('/servis/create', [ServisController::class, 'createServisView'])
+    ->name('servis.create');
+
+Route::post('/servis/create', [ServisController::class, 'createServis'])
+    ->name('servis.store');
+
+Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])
+    ->name('servis.getMotors');
+
+Route::get('/servis/edit/{id_servis}', [ServisController::class, 'editServisView'])
+    ->name('servis.edit');
+
+Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])
+    ->name('servis.update');
+
+Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])
+    ->name('servis.destroy');
+
+Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updateStatus'])
+    ->name('servis.updateStatus');
+
 
     
     // --- ROUTE BARU UNTUK AJAX ---
