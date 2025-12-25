@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('harga_sparepart', 12, 2)->nullable();
             $table->decimal('subtotal', 10, 2)->default(0);
 
-            $table->date('tanggal_transaksi');
+            $table->dateTime('tanggal_transaksi');
             $table->enum('metode_pembayaran', ['Cash', 'QRIS', 'Transfer']);
             $table->enum('status_pembayaran', ['Lunas', 'Belum Lunas'])->default('Belum Lunas');
 

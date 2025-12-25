@@ -11,18 +11,14 @@ use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
 use App\Http\Controllers\TransaksiController;
 
+
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
     return view('porto');
 });
 
-    // Halaman Utama (Public) - Redirect ke Staff Login
-    Route::get('/', function () {
-        return redirect()->route('login');
-    });
-    
-    // Halaman Porto (Customer View)
-    Route::get('/home', [CustomerController::class, 'showHomeCustomer'])->name('porto');
+    // Halaman Utama (Public)
+    Route::get('/', [CustomerController::class, 'showHomeCustomer'])->name('porto');
 
     // Route untuk Tamu (Belum Login)
     Route::middleware('guest')->group(function () {
@@ -33,7 +29,9 @@ use App\Http\Controllers\TransaksiController;
     // Route untuk yang sudah login (Auth)
     Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', [AdminController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
     // Route Management Data Customer
     // Halaman index customer (tabel + search)
@@ -75,42 +73,60 @@ use App\Http\Controllers\TransaksiController;
     Route::delete('/delete-sparepart/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
 
 
-   // =======================
-// Management Data Servis
+   // Route Management Data Servis
+    // Halaman manajemen servis
+    Route::get('/management-servis', [ServisController::class, 'showManagementServis'])->name('management-servis');
+    // Halaman tambah servis
+    Route::get('/servis/create', [ServisController::class, 'createServisView'])->name('servis.create');
+    // CRUD Servis
+    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('servis.getMotors');
+    Route::post('/servis/create', [ServisController::class, 'createServis'])->name('servis.store');
+    Route::get('/servis/edit/{id_servis}', [ServisController::class, 'editServisView'])->name('servis.edit');
+    Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])->name('servis.update');
+    Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])->name('servis.destroy');
+    // =======================
+// MANAGEMENT SERVIS
 // =======================
 
+// Halaman manajemen servis
 Route::get('/management-servis', [ServisController::class, 'showManagementServis'])
     ->name('management-servis');
 
+// Form tambah servis
 Route::get('/servis/create', [ServisController::class, 'createServisView'])
     ->name('servis.create');
 
-Route::post('/servis/create', [ServisController::class, 'createServis'])
+// Simpan servis
+Route::post('/servis', [ServisController::class, 'createServis'])
     ->name('servis.store');
 
-Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])
-    ->name('servis.getMotors');
-
-Route::get('/servis/edit/{id_servis}', [ServisController::class, 'editServisView'])
+// Form edit servis
+Route::get('/servis/{id_servis}/edit', [ServisController::class, 'editServisView'])
     ->name('servis.edit');
 
-Route::put('/servis/update/{id_servis}', [ServisController::class, 'updateServis'])
-    ->name('servis.update');
+    // Update servis
+    Route::put('/servis/{id_servis}', [ServisController::class, 'updateServis'])
+        ->name('servis.update');
 
-Route::delete('/servis/delete/{id_servis}', [ServisController::class, 'deleteServis'])
-    ->name('servis.destroy');
+    // 🔥 UPDATE STATUS SERVIS (INI YANG HILANG)
+    Route::put('/servis/{id_servis}/status', [ServisController::class, 'updateStatus'])
+        ->name('servis.updateStatus');
 
-Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updateStatus'])
-    ->name('servis.updateStatus');
+    // Hapus servis
+    Route::delete('/servis/{id_servis}', [ServisController::class, 'deleteServis'])
+        ->name('servis.destroy');
 
+    // AJAX: motor berdasarkan customer
+    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer'])
+        ->name('servis.getMotors');
 
-    
     // --- ROUTE BARU UNTUK AJAX ---
     // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
     Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
     // ----------------------------
-    // AJAX: dapatkan motor berdasarkan customer
-    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
+
+    // // AJAX: dapatkan motor berdasarkan customer
+    // Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
    
     // ----------------------------
     // ---------------------
@@ -130,7 +146,6 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
     Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
-
     // Hapus layanan
     Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
     
@@ -149,22 +164,26 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     Route::delete('/delete-mechanic/{id}', [MekanikController::class, 'deleteMechanic'])->name('delete-mechanic');
 
 
-    // ---------------------
-    // Transaction
-    // ---------------------
-    // Route transaksi terbaru by panji
-    // Halaman daftar transaksi
-    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    // Halaman form tambah transaksi
-    Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
-    // Proses simpan transaksi
-    Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
-    Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
-    Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
-    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
+   // ---------------------
+// TRANSAKSI
+// ---------------------
+Route::get('/management-transaction', [TransaksiController::class, 'index'])
+    ->name('transaksi.index');
 
+Route::get('/transaction/create', [TransaksiController::class, 'create'])
+    ->name('transaksi.create');
 
+Route::post('/transaction/store', [TransaksiController::class, 'store'])
+    ->name('transaksi.store');
 
+Route::get('/transaction/{id}', [TransaksiController::class, 'show'])
+    ->name('transaksi.show');
+
+Route::delete('/transaction/{id}', [TransaksiController::class, 'destroy'])
+    ->name('transaksi.destroy');
+
+Route::get('/transaction/{id}/cetak', [TransaksiController::class, 'cetak'])
+    ->name('transaksi.cetak');
 
 
     // ---------------------

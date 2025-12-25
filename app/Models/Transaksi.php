@@ -8,23 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 class Transaksi extends Model
 {
     use HasFactory;
+
     protected $table = 'transaction';
     protected $primaryKey = 'id_transaksi';
     public $incrementing = false;
     protected $keyType = 'string';
+
     protected $fillable = [
-        'id_transaksi',
-        'no_nota',
-        'id_servis',
-        'id_layanan',
-        'id_sparepart',
-        'harga_layanan',
-        'harga_sparepart',
-        'jumlah_sparepart',
-        'tanggal_transaksi',
-        'subtotal',
-        'metode_pembayaran',
-        'status_pembayaran',
+        'id_transaksi', 'no_nota', 'id_servis', 'id_layanan',
+        'id_sparepart', 'harga_layanan', 'harga_sparepart',
+        'jumlah_sparepart', 'tanggal_transaksi', 'subtotal',
+        'metode_pembayaran', 'status_pembayaran',
+    ];
+
+    // Otomatis ubah JSON di DB menjadi Array PHP
+    protected $casts = [
+        'id_layanan' => 'array',
+        'id_sparepart' => 'array',
+        'jumlah_sparepart' => 'array',
+        'tanggal_transaksi' => 'datetime',
     ];
 
     public function servis()
@@ -32,37 +34,37 @@ class Transaksi extends Model
         return $this->belongsTo(Servis::class, 'id_servis', 'id_servis');
     }
 
-    // Ambil layanan dari JSON
-    public function layanan()
+    // Mengambil data Layanan berdasarkan ID yang tersimpan di array
+    public function getLayananData()
     {
-        $ids = json_decode($this->id_layanan ?? '[]');
-        return Layanan::whereIn('id_layanan', $ids)->get();
+        return Layanan::whereIn('id_layanan', $this->id_layanan ?? [])->get();
     }
 
-    // Ambil sparepart dari JSON dan gabungkan jumlah
-    public function sparepart()
+    // Mengambil data Sparepart dan menggabungkan jumlahnya
+    public function getSparepartData()
     {
-        $ids = json_decode($this->id_sparepart ?? '[]');
-        $jumlah = json_decode($this->jumlah_sparepart ?? '{}', true);
+        $ids = $this->id_sparepart ?? [];
+        $jumlahMap = $this->jumlah_sparepart ?? [];
         $spareparts = Sparepart::whereIn('id_sparepart', $ids)->get();
 
-        foreach($spareparts as $sp){
-            $sp->jumlah = $jumlah[$sp->id_sparepart] ?? 0;
+        foreach ($spareparts as $sp) {
+            $sp->jumlah_beli = $jumlahMap[$sp->id_sparepart] ?? 0;
         }
 
         return $spareparts;
     }
 
-
-
-     public static function generateTransaksiId()
+    public static function generateTransaksiId()
     {
         $lastTransaksi = self::orderBy('id_transaksi', 'desc')->first();
         if (!$lastTransaksi) {
             return 'TRMKG001';
         }
-        $lastNumber = (int) preg_replace('/\D/', '', $lastTransaksi->id_transaksi);
+        
+        // Mengambil angka saja dari ID terakhir
+        $lastNumber = (int) preg_replace('/[^0-9]/', '', $lastTransaksi->id_transaksi);
         $newNumber = $lastNumber + 1;
+        
         return 'TRMKG' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 }
