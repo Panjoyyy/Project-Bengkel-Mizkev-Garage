@@ -109,10 +109,6 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
     Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
     // ----------------------------
-    // AJAX: dapatkan motor berdasarkan customer
-    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
-   
-    // ----------------------------
     // ---------------------
     // Order
     // ---------------------

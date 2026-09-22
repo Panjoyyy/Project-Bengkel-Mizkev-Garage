@@ -22,7 +22,7 @@ class Servis extends Model
         'status_servis'
     ];
 
-     public static function generateServisId()
+    public static function generateServisId()
     {
         $lastServis = self::orderBy('id_servis', 'desc')->first();
         if (!$lastServis) {
@@ -31,9 +31,12 @@ class Servis extends Model
         $lastNumber = (int) preg_replace('/\D/', '', $lastServis->id_servis);
         $newNumber = $lastNumber + 1;
         return 'SRC' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-     /**
-     * Relasi ke Customer (INI YANG HILANG)
-     */
+    }
+
+    // Relasi ke Customer (via Motor, karena servis tidak menyimpan id_customer langsung)
+    public function customer()
+    {
+        return $this->motor ? $this->motor->customer : null;
     }
 
     // Relasi ke Motor

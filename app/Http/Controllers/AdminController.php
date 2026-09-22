@@ -42,6 +42,11 @@ class AdminController extends Controller
     }
 
 
+    public function showDashboard()
+    {
+        return $this->showCreateOrder();
+    }
+
     public function showTransaction()
     {
         $data = [
