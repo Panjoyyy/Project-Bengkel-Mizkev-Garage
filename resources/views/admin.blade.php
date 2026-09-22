@@ -20,10 +20,16 @@
                     </button>
                 </div>
                 <ul class="sidebar-nav">
-                    <li class="sidebar-item {{ request()->is('create-order') ? 'sidebar-active' : '' }}">
-                        <a href="{{ route('create-order') }}" class="sidebar-link">
+                    <li class="sidebar-item {{ request()->is('dashboard') ? 'sidebar-active' : '' }}">
+                        <a href="{{ route('dashboard') }}" class="sidebar-link">
                             <i class="bi bi-border-all"></i>
                             <span>Dashboard Admin</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ request()->is('create-order') ? 'sidebar-active' : '' }}">
+                        <a href="{{ route('create-order') }}" class="sidebar-link">
+                            <i class="bi bi-cart-plus"></i>
+                            <span>Buat Order</span>
                         </a>
                     </li>
                     <li class="sidebar-item {{ request()->is('management-layanan') ? 'sidebar-active' : '' }}">
@@ -67,7 +73,7 @@
                     </a>
                     </li>
 
-                    <li class="sidebar-item {{ request()->is('transaction') ? 'sidebar-active' : '' }}">
+                    <li class="sidebar-item {{ request()->is('management-transaction') ? 'sidebar-active' : '' }}">
                         <a href="{{ route('transaction') }}" class="sidebar-link">
                             <i class="bi bi-ui-checks"></i>
                             <span>Transaksi</span>

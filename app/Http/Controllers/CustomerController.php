@@ -20,7 +20,7 @@ class CustomerController extends Controller
         'countService' => $services->count()
     ];
 
-    return view('porto', $data);
+    return view('home-modern', $data);
     }
 
     // Management Customer
@@ -122,17 +122,4 @@ public function updateCustomer(Request $request, $id_customer)
 
     return back()->with('success', 'Berhasil menghapus data customer');
     }
-
-     public function showCreateOrder()
-    {
-        $data = [
-            'title'     => 'Buat Pesanan',
-            'customers' => Customer::all(),
-            'motors'    => Motor::all(), 
-            'services'  => Service::all(),
-            'mechanics' => Mechanic::all()
-        ];
-        return view('create-order', $data); // view baru: resources/views/order/create.blade.php
-    }
-   
 }

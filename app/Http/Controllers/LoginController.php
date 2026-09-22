@@ -10,7 +10,7 @@ class LoginController extends Controller
     public function login()
     {
         $title = 'Silakan login';
-        return view('login', compact('title'));
+        return view('staff-login', compact('title'));
     }
 
     public function handleLogin(Request $request)
