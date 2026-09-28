@@ -10,6 +10,7 @@ use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\LaporanKeuanganController;
 
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
@@ -144,6 +145,11 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     // Hapus mekanik
     Route::delete('/delete-mechanic/{id}', [MekanikController::class, 'deleteMechanic'])->name('delete-mechanic');
 
+
+    // ---------------------
+    // Laporan Keuangan
+    // ---------------------
+    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan-keuangan');
 
     // ---------------------
     // Transaction

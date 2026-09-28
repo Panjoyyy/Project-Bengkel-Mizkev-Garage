@@ -673,9 +673,15 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="{{ route('transaksi.index') }}" class="sidebar-link {{ request()->is('management-transaction') ? 'active' : '' }}">
+                <a href="{{ route('transaksi.index') }}" class="sidebar-link {{ request()->is('transaksi*') ? 'active' : '' }}">
                     <i class="fas fa-receipt"></i>
                     <span>Transaksi</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('laporan-keuangan') }}" class="sidebar-link {{ request()->is('laporan-keuangan*') ? 'active' : '' }}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Laporan Keuangan</span>
                 </a>
             </li>
         </ul>
