@@ -351,8 +351,10 @@
 @push('styles')
 <style>
 @media print {
-    .sidebar, .top-bar, #filterForm, .btn-primary-custom { display: none !important; }
+    /* Phase 1: class layout diperbarui ke .topbar (sebelumnya .top-bar) */
+    .sidebar, .topbar, .top-bar, #filterForm, .btn-primary-custom { display: none !important; }
     .main-content { margin-left: 0 !important; width: 100% !important; }
+    .page-content { padding: 0 !important; }
     body { background: white !important; }
     .card { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
     a[href] { color: inherit !important; text-decoration: none !important; }

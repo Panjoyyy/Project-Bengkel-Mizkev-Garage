@@ -115,20 +115,44 @@
         <strong>{{ $item->metode_pembayaran }}</strong>
 
         @if($item->detail_pembayaran)
-            <br><small>{{ $item->detail_pembayaran }}</small>
+            <br><small style="color:#6b7280;">{{ $item->detail_pembayaran }}</small>
         @endif
 
         <br>
         @if($item->status_pembayaran == 'Lunas')
             <span class="badge bg-success mt-1">Lunas</span>
+        @elseif($item->metode_pembayaran === 'Pembayaran Online')
+            {{-- Transaksi online yang masih pending --}}
+            @if($item->midtrans_transaction_status === 'expire' || $item->midtrans_transaction_status === 'cancel' || $item->midtrans_transaction_status === 'deny')
+                <span class="badge mt-1" style="background:#fee2e2; color:#991b1b;">
+                    {{ ucfirst($item->midtrans_transaction_status ?? 'Gagal') }}
+                </span>
+            @else
+                <span class="badge mt-1" style="background:#fef3c7; color:#92400e;">
+                    <i class="fas fa-clock me-1" style="font-size:0.65rem;"></i>Menunggu Bayar
+                </span>
+            @endif
         @else
-            <span class="badge bg-danger mt-1">Belum</span>
+            <span class="badge bg-danger mt-1">Belum Lunas</span>
         @endif
     </td>
 
     <!-- Aksi: CETAK & DELETE -->
     <td style="text-align:center;">
         <div class="d-flex gap-2 justify-content-center">
+
+            <!-- TOMBOL BAYAR — hanya tampil untuk transaksi online yang belum lunas -->
+            @if($item->metode_pembayaran === 'Pembayaran Online'
+                && $item->status_pembayaran !== 'Lunas'
+                && $item->snap_token
+                && !in_array($item->midtrans_transaction_status, ['expire','cancel','deny']))
+                <a href="{{ route('transaksi.payment', $item->id_transaksi) }}"
+                   class="btn-warning-custom"
+                   style="padding:8px 16px; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px;"
+                   title="Selesaikan Pembayaran">
+                    <i class="fas fa-credit-card"></i> Bayar
+                </a>
+            @endif
 
             <!-- CETAK NOTA -->
             <a href="{{ route('transaksi.cetak', $item->id_transaksi) }}"
@@ -174,7 +198,7 @@
                 <h5 class="modal-title">
                     <i class="fas fa-exclamation-circle text-danger me-2"></i>Hapus Transaksi
                 </h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{{ route('transaksi.destroy', $item->id_transaksi) }}" method="POST">
                 @csrf
@@ -184,8 +208,8 @@
                     <p class="text-danger mt-2">Proses ini tidak dapat dikembalikan!</p>
                 </div>
                 <div class="modal-footer" style="border:none;">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button class="btn-danger-custom">Ya, Hapus</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn-danger-custom">Ya, Hapus</button>
                 </div>
             </form>
         </div>

@@ -63,8 +63,8 @@ class LayananController extends Controller
         $layanan = new Layanan();
         $layanan->id_layanan = Layanan::generateLayananId(); 
         $layanan->nama_layanan = $request->nama_layanan;
-        $layanan->deskripsi_layanan = $request->deskripsi_layanan;
-        $layanan->lokasi_layanan = $request->lokasi_layanan;
+        $layanan->deskripsi_layanan = $request->deskripsi_layanan ?? '';
+        $layanan->lokasi_layanan = $request->lokasi_layanan ?? '';
         $layanan->harga_layanan = $request->harga_layanan;
 
         if ($request->hasFile('foto_layanan')) {
@@ -72,6 +72,8 @@ class LayananController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('img/layanan'), $filename);
             $layanan->foto_layanan = $filename;
+        } else {
+            $layanan->foto_layanan = 'default.png';
         }
 
         $layanan->save();
@@ -102,13 +104,13 @@ class LayananController extends Controller
         ]);
 
         $layanan->nama_layanan = $request->nama_layanan;
-        $layanan->deskripsi_layanan = $request->deskripsi_layanan;
-        $layanan->lokasi_layanan = $request->lokasi_layanan;
+        $layanan->deskripsi_layanan = $request->deskripsi_layanan ?? '';
+        $layanan->lokasi_layanan = $request->lokasi_layanan ?? '';
         $layanan->harga_layanan = $request->harga_layanan;
 
         if ($request->hasFile('foto_layanan')) {
             $oldImagePath = public_path('img/layanan/' . $layanan->foto_layanan);
-            if ($layanan->foto_layanan && File::exists($oldImagePath)) {
+            if ($layanan->foto_layanan && $layanan->foto_layanan !== 'default.png' && File::exists($oldImagePath)) {
                 File::delete($oldImagePath);
             }
 
@@ -129,7 +131,7 @@ class LayananController extends Controller
     {
         $layanan = Layanan::findOrFail($id_layanan);
 
-        if ($layanan->foto_layanan) {
+        if ($layanan->foto_layanan && $layanan->foto_layanan !== 'default.png') {
             $imagePath = public_path('img/layanan/' . $layanan->foto_layanan);
             if (File::exists($imagePath)) {
                 File::delete($imagePath);

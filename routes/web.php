@@ -11,6 +11,7 @@ use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\LaporanKeuanganController;
+use App\Http\Controllers\PaymentController;
 
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
@@ -24,6 +25,14 @@ use App\Http\Controllers\LaporanKeuanganController;
     
     // Halaman Porto (Customer View)
     Route::get('/home', [CustomerController::class, 'showHomeCustomer'])->name('porto');
+
+    // =========================================================================
+    // MIDTRANS WEBHOOK — PUBLIK, tanpa middleware auth
+    // Midtrans server mengirim POST ke sini setelah pembayaran selesai/expire/cancel
+    // CSRF dikecualikan di VerifyCsrfToken.php
+    // =========================================================================
+    Route::post('/payment/webhook', [PaymentController::class, 'handleWebhook'])
+        ->name('payment.webhook');
 
     // Route untuk Tamu (Belum Login)
     Route::middleware('guest')->group(function () {
@@ -124,9 +133,8 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     Route::get('/create-layanan', [LayananController::class, 'showCreateForm'])->name('create-service-form');
     Route::post('/create-layanan', [LayananController::class, 'createService'])->name('create-service');
     // Edit layanan
-    Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
-    Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
+    Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
 
     // Hapus layanan
     Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
@@ -152,6 +160,14 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan-keuangan');
 
     // ---------------------
+    // Midtrans Callback Pages (butuh auth — admin yang melihat status)
+    // ---------------------
+    Route::get('/transaksi/{id}/payment',         [PaymentController::class, 'paymentFinish'])  ->name('transaksi.payment');
+    Route::get('/transaksi/{id}/payment/finish',  [PaymentController::class, 'paymentFinish'])  ->name('transaksi.payment.finish');
+    Route::get('/transaksi/{id}/payment/unfinish',[PaymentController::class, 'paymentUnfinish'])->name('transaksi.payment.unfinish');
+    Route::get('/transaksi/{id}/payment/error',   [PaymentController::class, 'paymentError'])   ->name('transaksi.payment.error');
+
+    // ---------------------
     // Transaction
     // ---------------------
     // Route transaksi terbaru by panji
@@ -161,9 +177,10 @@ Route::put('/servis/{id_servis}/update-status', [ServisController::class, 'updat
     Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
     // Proses simpan transaksi
     Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
+    // Cetak nota — didefinisikan sebelum /{id} agar tidak ter-capture sebagai wildcard
+    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
     Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
     Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
-    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
 
 
 

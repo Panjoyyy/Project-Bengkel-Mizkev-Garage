@@ -43,8 +43,8 @@ class CustomerController extends Controller
         }
     } else {
         $customers = Customer::all();
-        $message = null;
-        $alertType = null;
+        $message = session('message');
+        $alertType = session('alertType');
     }
 
     $data = [
