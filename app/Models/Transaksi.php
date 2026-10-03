@@ -25,6 +25,13 @@ class Transaksi extends Model
         'subtotal',
         'metode_pembayaran',
         'status_pembayaran',
+        // Kolom Midtrans
+        'snap_token',
+        'midtrans_order_id',
+        'midtrans_payment_type',
+        'midtrans_transaction_status',
+        'payment_expired_at',
+        'detail_pembayaran',
     ];
 
     public function servis()

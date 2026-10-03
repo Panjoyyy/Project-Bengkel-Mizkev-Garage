@@ -7,11 +7,16 @@ use App\Models\Transaksi;
 use App\Models\Servis;
 use App\Models\Layanan;
 use App\Models\Sparepart;
+use App\Services\MidtransService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TransaksiController extends Controller
 {
+    public function __construct(
+        protected MidtransService $midtrans
+    ) {}
    public function index(Request $request)
 {
     $search = $request->search;
@@ -77,26 +82,35 @@ class TransaksiController extends Controller
 
   public function store(Request $request)
 {
+    // ======================================================
+    // 1. CEK DUPLIKASI (sebelum DB transaction dimulai)
+    // ======================================================
     $cekTransaksi = Transaksi::where('id_servis', $request->id_servis)->first();
+    if ($cekTransaksi) {
+        return back()
+            ->with('error', 'Servis ini sudah memiliki transaksi!')
+            ->withInput();
+    }
 
-if ($cekTransaksi) {
-    DB::rollBack();
-    return back()
-        ->with('error', 'Servis ini sudah memiliki transaksi!')
-        ->withInput();
-}
-
+    // ======================================================
+    // 2. VALIDASI INPUT
+    // ======================================================
     $request->validate([
-        'id_servis' => 'required',
-        'id_layanan' => 'required|array',
-        'metode_pembayaran' => 'required',
+        'id_servis'          => 'required|string',
+        'id_layanan'         => 'required|array|min:1',
+        'metode_pembayaran'  => 'required|in:Cash,QRIS,Transfer,Pembayaran Online',
     ]);
 
+    $isOnlinePayment = $request->metode_pembayaran === 'Pembayaran Online';
+
+    // ======================================================
+    // 3. DB TRANSACTION — simpan data inti + kurangi stok
+    //    Pemanggilan API Midtrans dilakukan DI LUAR blok ini
+    //    untuk menghindari DB lock timeout.
+    // ======================================================
     DB::beginTransaction();
     try {
-        // ======================================================
-        // VALIDASI STATUS SERVIS (WAJIB SELESAI)
-        // ======================================================
+        // ── Validasi status servis ────────────────────────
         $servis = Servis::where('id_servis', $request->id_servis)
             ->where('status_servis', 'selesai')
             ->first();
@@ -108,58 +122,42 @@ if ($cekTransaksi) {
                 ->withInput();
         }
 
-        // ======================================================
-        // Generate ID Transaksi & Nota
-        // ======================================================
+        // ── Generate ID & Nota ────────────────────────────
         $idTransaksi = Transaksi::generateTransaksiId();
-        $noNota = 'NT' . strtoupper(uniqid());
+        $noNota      = 'NT' . strtoupper(uniqid());
 
-        // ======================================================
-        // Hitung Total Harga Layanan
-        // ======================================================
+        // ── Hitung total layanan ──────────────────────────
         $totalHargaLayanan = Layanan::whereIn('id_layanan', $request->id_layanan)
             ->sum('harga_layanan');
 
-        // ======================================================
-        // Hitung Total Harga Sparepart + Kurangi Stok
-        // ======================================================
+        // ── Hitung total sparepart + kurangi stok ─────────
         $totalHargaSparepart = 0;
 
         if ($request->has('id_sparepart')) {
             foreach ($request->id_sparepart as $id_sparepart) {
                 $jumlah = $request->jumlah_sparepart[$id_sparepart] ?? 0;
-                $sp = Sparepart::find($id_sparepart);
+                $sp     = Sparepart::find($id_sparepart);
 
                 if ($sp && $jumlah > 0) {
-
-                    // Validasi stok
                     if ($sp->stok_sparepart < $jumlah) {
                         DB::rollBack();
                         return back()
                             ->with('error', "Stok sparepart {$sp->nama_sparepart} tidak mencukupi!")
                             ->withInput();
                     }
-
-                    // Kurangi stok
                     $sp->stok_sparepart -= $jumlah;
                     $sp->save();
-
                     $totalHargaSparepart += $sp->harga_sparepart * $jumlah;
                 }
             }
         }
 
-        // ======================================================
-        // Hitung Subtotal
-        // ======================================================
+        // ── Subtotal ──────────────────────────────────────
         $subtotal = $totalHargaLayanan + $totalHargaSparepart;
 
-        // ======================================================
-        // Validasi Pembayaran Tunai
-        // ======================================================
-        if ($request->metode_pembayaran === 'Tunai') {
-            $uang_dibayar = $request->uang_dibayar ?? 0;
-
+        // ── Validasi uang tunai (hanya untuk Cash) ────────
+        if ($request->metode_pembayaran === 'Cash') {
+            $uang_dibayar = (float) ($request->uang_dibayar ?? 0);
             if ($uang_dibayar < $subtotal) {
                 DB::rollBack();
                 return back()
@@ -168,32 +166,84 @@ if ($cekTransaksi) {
             }
         }
 
-        // ======================================================
-        // Simpan Transaksi
-        // ======================================================
-        Transaksi::create([
-            'id_transaksi' => $idTransaksi,
-            'no_nota' => $noNota,
-            'id_servis' => $request->id_servis,
-            'id_layanan' => json_encode($request->id_layanan),
-            'id_sparepart' => json_encode($request->id_sparepart),
-            'jumlah_sparepart' => json_encode($request->jumlah_sparepart ?? []),
-            'harga_layanan' => $totalHargaLayanan,
-            'harga_sparepart' => $totalHargaSparepart,
+        // ── Tentukan status & midtrans_order_id ───────────
+        $statusPembayaran  = $isOnlinePayment ? 'Belum Lunas' : 'Lunas';
+        $midtransOrderId   = $isOnlinePayment ? 'MZKV-' . $idTransaksi : null;
+
+        // ── Simpan transaksi ──────────────────────────────
+        $transaksi = Transaksi::create([
+            'id_transaksi'      => $idTransaksi,
+            'no_nota'           => $noNota,
+            'id_servis'         => $request->id_servis,
+            'id_layanan'        => json_encode($request->id_layanan),
+            'id_sparepart'      => json_encode($request->id_sparepart),
+            'jumlah_sparepart'  => json_encode($request->jumlah_sparepart ?? []),
+            'harga_layanan'     => $totalHargaLayanan,
+            'harga_sparepart'   => $totalHargaSparepart,
             'tanggal_transaksi' => now(),
-            'subtotal' => $subtotal,
+            'subtotal'          => $subtotal,
             'metode_pembayaran' => $request->metode_pembayaran,
-            'status_pembayaran' => $request->status_pembayaran,
+            'status_pembayaran' => $statusPembayaran,
+            'midtrans_order_id' => $midtransOrderId,
         ]);
 
         DB::commit();
-        return redirect()->route('transaksi.index')
-            ->with('success', 'Transaksi berhasil ditambahkan!');
+
     } catch (\Exception $e) {
         DB::rollBack();
+        Log::error('[TransaksiController] Gagal menyimpan transaksi', [
+            'error' => $e->getMessage(),
+        ]);
         return back()
-            ->with('error', 'Gagal menyimpan transaksi: ' . $e->getMessage());
+            ->with('error', 'Gagal menyimpan transaksi: ' . $e->getMessage())
+            ->withInput();
     }
+
+    // ======================================================
+    // 4. ALUR BERDASARKAN METODE PEMBAYARAN
+    //    Panggilan Midtrans API dilakukan di sini, DI LUAR
+    //    blok DB::transaction agar tidak menyebabkan lock.
+    // ======================================================
+    if ($isOnlinePayment) {
+        // ── Ambil Snap Token dari Midtrans ────────────────
+        try {
+            // Muat relasi yang dibutuhkan MidtransService
+            $transaksi->load(['servis.motor.customer']);
+
+            $snapData = $this->midtrans->createSnapToken($transaksi);
+
+            // Simpan snap_token dan waktu expired (default Midtrans: 24 jam)
+            $transaksi->update([
+                'snap_token'       => $snapData['snap_token'],
+                'payment_expired_at' => now()->addHours(24),
+            ]);
+
+            Log::info('[TransaksiController] Snap Token berhasil dibuat', [
+                'id_transaksi'     => $transaksi->id_transaksi,
+                'midtrans_order_id'=> $transaksi->midtrans_order_id,
+            ]);
+
+        } catch (\Exception $e) {
+            // Snap token gagal: transaksi tetap tersimpan sebagai Belum Lunas,
+            // admin bisa coba generate ulang atau ubah ke metode manual.
+            Log::error('[TransaksiController] Gagal mendapatkan Snap Token', [
+                'id_transaksi' => $transaksi->id_transaksi,
+                'error'        => $e->getMessage(),
+            ]);
+            return redirect()->route('transaksi.payment', ['id' => $transaksi->id_transaksi])
+                ->with('warning', 'Transaksi tersimpan, tetapi koneksi ke Midtrans gagal: '
+                    . $e->getMessage()
+                    . '. Silakan coba lagi dari halaman pembayaran.');
+        }
+
+        // ── Redirect ke halaman pembayaran ───────────────
+        return redirect()->route('transaksi.payment', ['id' => $transaksi->id_transaksi])
+            ->with('success', 'Transaksi berhasil dibuat. Silakan selesaikan pembayaran.');
+    }
+
+    // ── Offline: redirect langsung ke index ──────────────
+    return redirect()->route('transaksi.index')
+        ->with('success', 'Transaksi berhasil ditambahkan!');
 }
 public function show($id)
 {

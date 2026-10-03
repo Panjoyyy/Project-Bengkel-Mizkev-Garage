@@ -26,7 +26,7 @@
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
 
-            <form method="POST" action="{{ route('servis.update', $servis->id_servis) }}">
+            <form method="POST" action="{{ route('servis.update', $servis->id_servis) }}" id="servisForm">
                 @csrf
                 @method('PUT')
 
@@ -174,42 +174,16 @@
     </div>
 </div>
 
-<!-- AJAX MOTOR -->
-<script>
-document.getElementById('id_customer').addEventListener('change', function () {
-    const customerId = this.value;
-    const motorSelect = document.getElementById('id_motor');
-
-    motorSelect.innerHTML = '<option>Memuat...</option>';
-
-    fetch(`/servis/motors/${customerId}`)
-        .then(res => res.json())
-        .then(data => {
-            motorSelect.innerHTML = '';
-            data.forEach(motor => {
-                motorSelect.innerHTML +=
-                    `<option value="${motor.id_motor}">
-                        ${motor.merk_motor} - ${motor.no_plat_motor}
-                    </option>`;
-            });
-        });
-});
-</script>
-
 <script>
 // Dynamic motor loading based on customer selection
 document.getElementById('id_customer').addEventListener('change', function() {
     let customerId = this.value;
     let motorSelect = document.getElementById('id_motor');
-    let motorHelp = document.getElementById('motorHelp');
-
-    // Show loading state
-    motorSelect.innerHTML = '<option value="">⏳ Memuat motor...</option>';
-    motorSelect.disabled = true;
-    motorHelp.textContent = 'Sedang memuat motor...';
-    motorHelp.style.color = '#f59e0b';
 
     if(customerId) {
+        motorSelect.disabled = true;
+        motorSelect.innerHTML = '<option value="">⏳ Memuat motor...</option>';
+
         let url = "{{ url('/servis/motors') }}/" + customerId;
 
         fetch(url)
@@ -219,54 +193,37 @@ document.getElementById('id_customer').addEventListener('change', function() {
             })
             .then(data => {
                 motorSelect.innerHTML = '<option value="">-- Pilih Motor --</option>';
-                
                 if (data.length === 0) {
                     motorSelect.innerHTML += '<option value="" disabled>Tidak ada motor untuk customer ini</option>';
-                    motorHelp.textContent = '⚠️ Customer ini belum memiliki motor';
-                    motorHelp.style.color = '#ef4444';
                 } else {
                     data.forEach(motor => {
                         motorSelect.innerHTML += `<option value="${motor.id_motor}">${motor.merk_motor} - ${motor.no_plat_motor}</option>`;
                     });
-                    motorHelp.textContent = `✓ ${data.length} motor ditemukan`;
-                    motorHelp.style.color = '#10b981';
                 }
                 motorSelect.disabled = false;
             })
             .catch(error => {
                 motorSelect.innerHTML = '<option value="">❌ Gagal memuat motor</option>';
-                motorHelp.textContent = 'Terjadi kesalahan saat memuat motor';
-                motorHelp.style.color = '#ef4444';
                 console.error('Error:', error);
                 motorSelect.disabled = false;
             });
     } else {
         motorSelect.innerHTML = '<option value="">-- Pilih Motor --</option>';
         motorSelect.disabled = true;
-        motorHelp.textContent = 'Pilih customer terlebih dahulu';
-        motorHelp.style.color = '#6c757d';
     }
 });
 
 // Form validation
 document.getElementById('servisForm').addEventListener('submit', function(e) {
     const tanggalServis = document.getElementById('tanggal_servis').value;
-    const idCustomer = document.getElementById('id_customer').value;
     const idMotor = document.getElementById('id_motor').value;
     const idMechanic = document.getElementById('id_mechanic').value;
     const idStaff = document.getElementById('id_staff').value;
     const keluhan = document.getElementById('keluhan').value.trim();
     
-    // Validate all required fields
     if (!tanggalServis) {
         e.preventDefault();
         alert('Pilih tanggal dan waktu servis!');
-        return false;
-    }
-    
-    if (!idCustomer) {
-        e.preventDefault();
-        alert('Pilih customer!');
         return false;
     }
     
@@ -288,9 +245,9 @@ document.getElementById('servisForm').addEventListener('submit', function(e) {
         return false;
     }
     
-    if (keluhan.length < 10) {
+    if (keluhan.length < 5) {
         e.preventDefault();
-        alert('Keluhan minimal 10 karakter!');
+        alert('Keluhan minimal 5 karakter!');
         return false;
     }
     
