@@ -111,21 +111,21 @@
             <td>
                 <strong>{{ $item->metode_pembayaran }}</strong>
 
-                @if($item->detail_pembayaran)
-                    <br><small>{{ $item->detail_pembayaran }}</small>
-                @endif
+        @if($item->detail_pembayaran)
+            <br><small>{{ $item->detail_pembayaran }}</small>
+        @endif
 
-                <br>
-                @if($item->status_pembayaran == 'Lunas')
-                    <span class="badge bg-success mt-1">Lunas</span>
-                @else
-                    <span class="badge bg-danger mt-1">Belum</span>
-                @endif
-            </td>
+        <br>
+        @if($item->status_pembayaran == 'Lunas')
+            <span class="badge bg-success mt-1">Lunas</span>
+        @else
+            <span class="badge bg-danger mt-1">Belum</span>
+        @endif
+    </td>
 
-            <!-- Aksi: CETAK & DELETE -->
-            <td style="text-align:center;">
-                <div class="d-flex gap-2 justify-content-center">
+    <!-- Aksi: CETAK & DELETE -->
+    <td style="text-align:center;">
+        <div class="d-flex gap-2 justify-content-center">
 
                     <!-- CETAK NOTA -->
                     <a href="{{ route('transaksi.cetak', $item->id_transaksi) }}"
@@ -162,32 +162,32 @@
 
     </div>
 
-    <!-- Delete Modal -->
-    @foreach($transaksi as $item)
-    <div class="modal fade" id="delete{{ $item->id_transaksi }}" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius:20px;">
-                <div class="modal-header" style="border:none;">
-                    <h5 class="modal-title">
-                        <i class="fas fa-exclamation-circle text-danger me-2"></i>Hapus Transaksi
-                    </h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="{{ route('transaksi.destroy', $item->id_transaksi) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <div class="modal-body">
-                        Yakin ingin menghapus transaksi <strong>{{ $item->id_transaksi }}</strong>?  
-                        <p class="text-danger mt-2">Proses ini tidak dapat dikembalikan!</p>
-                    </div>
-                    <div class="modal-footer" style="border:none;">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button class="btn-danger-custom">Ya, Hapus</button>
-                    </div>
-                </form>
+<!-- Delete Modal -->
+@foreach($transaksi as $item)
+<div class="modal fade" id="delete{{ $item->id_transaksi }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:20px;">
+            <div class="modal-header" style="border:none;">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-circle text-danger me-2"></i>Hapus Transaksi
+                </h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <form action="{{ route('transaksi.destroy', $item->id_transaksi) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body">
+                    Yakin ingin menghapus transaksi <strong>{{ $item->id_transaksi }}</strong>?  
+                    <p class="text-danger mt-2">Proses ini tidak dapat dikembalikan!</p>
+                </div>
+                <div class="modal-footer" style="border:none;">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button class="btn-danger-custom">Ya, Hapus</button>
+                </div>
+            </form>
         </div>
     </div>
-    @endforeach
+</div>
+@endforeach
 
 @endsection

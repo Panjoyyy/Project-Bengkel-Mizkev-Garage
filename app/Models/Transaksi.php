@@ -15,18 +15,18 @@ class Transaksi extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id_transaksi', 'no_nota', 'id_servis', 'id_layanan',
-        'id_sparepart', 'harga_layanan', 'harga_sparepart',
-        'jumlah_sparepart', 'tanggal_transaksi', 'subtotal',
-        'metode_pembayaran', 'status_pembayaran',
-    ];
-
-    // Otomatis ubah JSON di DB menjadi Array PHP
-    protected $casts = [
-        'id_layanan' => 'array',
-        'id_sparepart' => 'array',
-        'jumlah_sparepart' => 'array',
-        'tanggal_transaksi' => 'datetime',
+        'id_transaksi',
+        'no_nota',
+        'id_servis',
+        'id_layanan',
+        'id_sparepart',
+        'harga_layanan',
+        'harga_sparepart',
+        'jumlah_sparepart',
+        'tanggal_transaksi',
+        'subtotal',
+        'metode_pembayaran',
+        'status_pembayaran',
     ];
 
     public function servis()

@@ -47,6 +47,12 @@ class MekanikController extends Controller
     // Simpan mekanik baru
     public function createMechanic(Request $request)
     {
+        $request->validate([
+            'mechanic_name'  => 'required|string|max:100',
+            'mechanic_phone' => 'required|string|max:20',
+            'mechanic_image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+        ]);
+
         $mechanic = new Mechanic();
         $mechanic->id_mechanic = Mechanic::generateMechanicId();
         $mechanic->mechanic_name = $request->mechanic_name;
@@ -57,6 +63,8 @@ class MekanikController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('img/mechanics'), $filename);
             $mechanic->mechanic_image = $filename;
+        } else {
+            $mechanic->mechanic_image = 'default.png';
         }
 
         $mechanic->save();
@@ -79,13 +87,19 @@ class MekanikController extends Controller
     // Update mekanik
     public function updateMechanic(Request $request, $id_mechanic)
     {
+        $request->validate([
+            'mechanic_name'  => 'required|string|max:100',
+            'mechanic_phone' => 'required|string|max:20',
+            'mechanic_image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+        ]);
+
         $mechanic = Mechanic::findOrFail($id_mechanic);
         $mechanic->mechanic_name = $request->mechanic_name;
         $mechanic->mechanic_phone = $request->mechanic_phone;
 
         if ($request->hasFile('mechanic_image')) {
             $oldImagePath = public_path('img/mechanics/' . $mechanic->mechanic_image);
-            if (File::exists($oldImagePath)) {
+            if ($mechanic->mechanic_image && $mechanic->mechanic_image !== 'default.png' && File::exists($oldImagePath)) {
                 File::delete($oldImagePath);
             }
 
@@ -106,7 +120,7 @@ class MekanikController extends Controller
     {
         $mechanic = Mechanic::findOrFail($id);
         $oldImagePath = public_path('img/mechanics/' . $mechanic->mechanic_image);
-        if (File::exists($oldImagePath)) {
+        if ($mechanic->mechanic_image && $mechanic->mechanic_image !== 'default.png' && File::exists($oldImagePath)) {
             File::delete($oldImagePath);
         }
         $mechanic->delete();

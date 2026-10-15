@@ -10,7 +10,8 @@ use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ServisController;
 use App\Http\Controllers\TransaksiController;
-
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\LaporanKeuanganController;
 
     // Route untuk menampilkan halaman porto brian
     Route::get('/porto', function () {
@@ -19,6 +20,14 @@ use App\Http\Controllers\TransaksiController;
 
     // Halaman Utama (Public)
     Route::get('/', [CustomerController::class, 'showHomeCustomer'])->name('porto');
+
+    // =========================================================================
+    // MIDTRANS WEBHOOK — PUBLIK, tanpa middleware auth
+    // Midtrans server mengirim POST ke sini setelah pembayaran selesai/expire/cancel
+    // CSRF dikecualikan di VerifyCsrfToken.php
+    // =========================================================================
+    Route::post('/payment/webhook', [PaymentController::class, 'handleWebhook'])
+        ->name('payment.webhook');
 
     // Route untuk Tamu (Belum Login)
     Route::middleware('guest')->group(function () {
@@ -124,9 +133,8 @@ Route::get('/servis/{id_servis}/edit', [ServisController::class, 'editServisView
     // Route ini akan dipanggil oleh JavaScript untuk mengambil data motor berdasarkan customer yang dipilih.
     Route::get('/get-motors-by-customer/{customerId}', [ServisController::class, 'getMotorsByCustomer'])->name('get.motors.by.customer');
     // ----------------------------
-
-    // // AJAX: dapatkan motor berdasarkan customer
-    // Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
+    // AJAX: dapatkan motor berdasarkan customer
+    Route::get('/servis/motors/{customerId}', [ServisController::class, 'getMotorsByCustomer']);
    
     // ----------------------------
     // ---------------------
@@ -143,9 +151,8 @@ Route::get('/servis/{id_servis}/edit', [ServisController::class, 'editServisView
     Route::get('/create-layanan', [LayananController::class, 'showCreateForm'])->name('create-service-form');
     Route::post('/create-layanan', [LayananController::class, 'createService'])->name('create-service');
     // Edit layanan
-    Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'showEditForm'])->name('edit-service-form');
-    Route::put('/update-service/{id_layanan}', [LayananController::class, 'updateService'])->name('update-service');
     Route::get('/edit-layanan/{id_layanan}', [LayananController::class, 'editServiceForm'])->name('edit-service-form');
+
     // Hapus layanan
     Route::delete('/delete-service/{id_layanan}', [LayananController::class, 'deleteService'])->name('delete-service');
     
@@ -164,26 +171,35 @@ Route::get('/servis/{id_servis}/edit', [ServisController::class, 'editServisView
     Route::delete('/delete-mechanic/{id}', [MekanikController::class, 'deleteMechanic'])->name('delete-mechanic');
 
 
-   // ---------------------
-// TRANSAKSI
-// ---------------------
-Route::get('/management-transaction', [TransaksiController::class, 'index'])
-    ->name('transaksi.index');
+    // ---------------------
+    // Laporan Keuangan
+    // ---------------------
+    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan-keuangan');
 
-Route::get('/transaction/create', [TransaksiController::class, 'create'])
-    ->name('transaksi.create');
+    // ---------------------
+    // Midtrans Callback Pages (butuh auth — admin yang melihat status)
+    // ---------------------
+    Route::get('/transaksi/{id}/payment',         [PaymentController::class, 'paymentFinish'])  ->name('transaksi.payment');
+    Route::get('/transaksi/{id}/payment/finish',  [PaymentController::class, 'paymentFinish'])  ->name('transaksi.payment.finish');
+    Route::get('/transaksi/{id}/payment/unfinish',[PaymentController::class, 'paymentUnfinish'])->name('transaksi.payment.unfinish');
+    Route::get('/transaksi/{id}/payment/error',   [PaymentController::class, 'paymentError'])   ->name('transaksi.payment.error');
 
-Route::post('/transaction/store', [TransaksiController::class, 'store'])
-    ->name('transaksi.store');
+    // ---------------------
+    // Transaction
+    // ---------------------
+    // Route transaksi terbaru by panji
+    // Halaman daftar transaksi
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    // Halaman form tambah transaksi
+    Route::get('/transaksi/create', [TransaksiController::class, 'create'])->name('transaksi.create');
+    // Proses simpan transaksi
+    Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
 
-Route::get('/transaction/{id}', [TransaksiController::class, 'show'])
-    ->name('transaksi.show');
 
-Route::delete('/transaction/{id}', [TransaksiController::class, 'destroy'])
-    ->name('transaksi.destroy');
 
-Route::get('/transaction/{id}/cetak', [TransaksiController::class, 'cetak'])
-    ->name('transaksi.cetak');
 
 
     // ---------------------

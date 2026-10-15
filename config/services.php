@@ -31,4 +31,18 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // -------------------------------------------------------------------------
+    // Midtrans Payment Gateway
+    // -------------------------------------------------------------------------
+    // Dapatkan Server Key dan Client Key dari:
+    // Sandbox  : https://dashboard.sandbox.midtrans.com
+    // Production: https://dashboard.midtrans.com
+    // Settings > Access Keys
+    // -------------------------------------------------------------------------
+    'midtrans' => [
+        'server_key'    => env('MIDTRANS_SERVER_KEY', ''),
+        'client_key'    => env('MIDTRANS_CLIENT_KEY', ''),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+    ],
+
 ];

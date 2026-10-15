@@ -102,9 +102,10 @@
                         <select name="metode_pembayaran" id="metode_pembayaran" class="form-select"
                             style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e5e7eb;" required>
                             <option value="">-- Pilih Metode Pembayaran --</option>
-                            <option value="Cash">Cash</option>
-                            <option value="QRIS">QRIS</option>
-                            <option value="Transfer">Transfer</option>
+                            <option value="Cash">Cash (Tunai)</option>
+                            <option value="QRIS">QRIS (Manual/Offline)</option>
+                            <option value="Transfer">Transfer Manual</option>
+                            <option value="Pembayaran Online" style="font-weight:700; color:#00a152;">💳 Pembayaran Online (Midtrans)</option>
                         </select>
                     </div>
 
@@ -132,6 +133,21 @@
                     </div>
 
                     <input type="hidden" name="status_pembayaran" id="status_pembayaran" value="Lunas">
+
+                    {{-- Informasi tambahan untuk Pembayaran Online --}}
+                    <div id="online_payment_info" style="display:none; margin-bottom:16px; padding:16px 20px; background:linear-gradient(135deg,#ecfdf5,#d1fae5); border-radius:12px; border-left:4px solid #00a152;">
+                        <div style="display:flex; align-items:flex-start; gap:12px;">
+                            <i class="fas fa-info-circle" style="color:#00a152; font-size:1.2rem; margin-top:2px;"></i>
+                            <div>
+                                <p style="margin:0 0 6px; font-weight:700; color:#065f46; font-size:0.95rem;">Pembayaran Online via Midtrans</p>
+                                <p style="margin:0; color:#047857; font-size:0.88rem; line-height:1.5;">
+                                    Transaksi akan disimpan dengan status <strong>Belum Lunas</strong>. 
+                                    Setelah disimpan, Anda akan diarahkan ke halaman pembayaran Midtrans. 
+                                    Status akan otomatis berubah ke <strong>Lunas</strong> setelah pembayaran dikonfirmasi.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="mb-4 p-3" style="border-radius: 10px; background: #f3f4f6;">
                         <h5>Total Harga: <span id="totalHarga" style="font-weight:700; color:#10b981;">Rp 0</span></h5>
@@ -246,11 +262,19 @@
         const pembayaran = document.getElementById('metode_pembayaran');
 
         pembayaran.addEventListener('change', function () {
-            document.getElementById('qris_options').style.display =
-                this.value === 'QRIS' ? 'block' : 'none';
+            const isQRIS     = this.value === 'QRIS';
+            const isTransfer = this.value === 'Transfer';
+            const isOnline   = this.value === 'Pembayaran Online';
 
-            document.getElementById('transfer_options').style.display =
-                this.value === 'Transfer' ? 'block' : 'none';
+            // Tampilkan / sembunyikan sub-opsi metode manual
+            document.getElementById('qris_options').style.display     = isQRIS     ? 'block' : 'none';
+            document.getElementById('transfer_options').style.display  = isTransfer ? 'block' : 'none';
+
+            // Tampilkan info panel Pembayaran Online
+            document.getElementById('online_payment_info').style.display = isOnline ? 'block' : 'none';
+
+            // Set status_pembayaran: Belum Lunas untuk Online, Lunas untuk manual
+            document.getElementById('status_pembayaran').value = isOnline ? 'Belum Lunas' : 'Lunas';
         });
     </script>
 @endsection

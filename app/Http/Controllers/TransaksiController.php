@@ -8,6 +8,7 @@ use App\Models\Servis;
 use App\Models\Layanan;
 use App\Models\Sparepart;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TransaksiController extends Controller
 {
