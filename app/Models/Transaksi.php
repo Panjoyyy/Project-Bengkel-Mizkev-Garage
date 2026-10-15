@@ -27,16 +27,13 @@ class Transaksi extends Model
         'subtotal',
         'metode_pembayaran',
         'status_pembayaran',
-    ];
-
-    // Otomatis mengubah kolom JSON di database menjadi Array PHP
-    protected $casts = [
-        'id_layanan' => 'array',
-        'id_sparepart' => 'array',
-        'harga_layanan' => 'array',
-        'harga_sparepart' => 'array',
-        'jumlah_sparepart' => 'array',
-        'tanggal_transaksi' => 'datetime',
+        // Kolom Midtrans dari branch create_transaction
+        'snap_token',
+        'midtrans_order_id',
+        'midtrans_payment_type',
+        'midtrans_transaction_status',
+        'payment_expired_at',
+        'detail_pembayaran',
     ];
 
     public function servis()
@@ -44,37 +41,36 @@ class Transaksi extends Model
         return $this->belongsTo(Servis::class, 'id_servis', 'id_servis');
     }
 
-    // Mengambil data Layanan berdasarkan ID yang tersimpan di array
-    public function getLayananData()
+    // 1. Fungsi versi create_transaction (Temanmu)
+    public function layanan()
     {
-        $ids = $this->id_layanan ?? [];
-        if (is_string($ids)) {
-            $ids = json_decode($ids, true) ?? [];
-        }
-
-        return Layanan::whereIn('id_layanan', is_array($ids) ? $ids : [])->get();
+        $ids = is_string($this->id_layanan) ? json_decode($this->id_layanan, true) : $this->id_layanan;
+        return Layanan::whereIn('id_layanan', $ids ?? [])->get();
     }
 
-    // Mengambil data Sparepart dan menggabungkan jumlahnya
-    public function getSparepartData()
+    public function sparepart()
     {
-        $ids = $this->id_sparepart ?? [];
-        if (is_string($ids)) {
-            $ids = json_decode($ids, true) ?? [];
-        }
-
-        $jumlahMap = $this->jumlah_sparepart ?? [];
-        if (is_string($jumlahMap)) {
-            $jumlahMap = json_decode($jumlahMap, true) ?? [];
-        }
-
-        $spareparts = Sparepart::whereIn('id_sparepart', is_array($ids) ? $ids : [])->get();
+        $ids = is_string($this->id_sparepart) ? json_decode($this->id_sparepart, true) : $this->id_sparepart;
+        $jumlah = is_string($this->jumlah_sparepart) ? json_decode($this->jumlah_sparepart, true) : $this->jumlah_sparepart;
+        $spareparts = Sparepart::whereIn('id_sparepart', $ids ?? [])->get();
 
         foreach ($spareparts as $sp) {
-            $sp->jumlah_beli = $jumlahMap[$sp->id_sparepart] ?? 0;
+            $sp->jumlah = $jumlah[$sp->id_sparepart] ?? 0;
+            $sp->jumlah_beli = $jumlah[$sp->id_sparepart] ?? 0;
         }
 
         return $spareparts;
+    }
+
+    // 2. Fungsi versi kevin_transaksi (Milikmu) - tetap dipertahankan agar blade tidak error
+    public function getLayananData()
+    {
+        return $this->layanan();
+    }
+
+    public function getSparepartData()
+    {
+        return $this->sparepart();
     }
 
     public static function generateTransaksiId()
@@ -83,11 +79,8 @@ class Transaksi extends Model
         if (!$lastTransaksi) {
             return 'TRMKG001';
         }
-        
-        // Mengambil angka saja dari ID terakhir
-        $lastNumber = (int) preg_replace('/[^0-9]/', '', $lastTransaksi->id_transaksi);
+        $lastNumber = (int) preg_replace('/\D/', '', $lastTransaksi->id_transaksi);
         $newNumber = $lastNumber + 1;
-        
         return 'TRMKG' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 }
