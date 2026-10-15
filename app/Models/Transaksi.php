@@ -29,6 +29,16 @@ class Transaksi extends Model
         'status_pembayaran',
     ];
 
+    // Otomatis mengubah kolom JSON di database menjadi Array PHP
+    protected $casts = [
+        'id_layanan' => 'array',
+        'id_sparepart' => 'array',
+        'harga_layanan' => 'array',
+        'harga_sparepart' => 'array',
+        'jumlah_sparepart' => 'array',
+        'tanggal_transaksi' => 'datetime',
+    ];
+
     public function servis()
     {
         return $this->belongsTo(Servis::class, 'id_servis', 'id_servis');
@@ -37,15 +47,28 @@ class Transaksi extends Model
     // Mengambil data Layanan berdasarkan ID yang tersimpan di array
     public function getLayananData()
     {
-        return Layanan::whereIn('id_layanan', $this->id_layanan ?? [])->get();
+        $ids = $this->id_layanan ?? [];
+        if (is_string($ids)) {
+            $ids = json_decode($ids, true) ?? [];
+        }
+
+        return Layanan::whereIn('id_layanan', is_array($ids) ? $ids : [])->get();
     }
 
     // Mengambil data Sparepart dan menggabungkan jumlahnya
     public function getSparepartData()
     {
         $ids = $this->id_sparepart ?? [];
+        if (is_string($ids)) {
+            $ids = json_decode($ids, true) ?? [];
+        }
+
         $jumlahMap = $this->jumlah_sparepart ?? [];
-        $spareparts = Sparepart::whereIn('id_sparepart', $ids)->get();
+        if (is_string($jumlahMap)) {
+            $jumlahMap = json_decode($jumlahMap, true) ?? [];
+        }
+
+        $spareparts = Sparepart::whereIn('id_sparepart', is_array($ids) ? $ids : [])->get();
 
         foreach ($spareparts as $sp) {
             $sp->jumlah_beli = $jumlahMap[$sp->id_sparepart] ?? 0;
